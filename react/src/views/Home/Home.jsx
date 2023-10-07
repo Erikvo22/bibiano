@@ -1,8 +1,8 @@
 import React, {useState}from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Layout, Menu, Button } from 'antd';
-import { UserIcon, ClockIcon, XIcon, MenuAlt3Icon} from '@heroicons/react/outline'; 
-import { MenuUnfoldOutlined } from '@ant-design/icons';
+import { UserIcon, ClockIcon, ChevronRightIcon, MenuAlt3Icon} from '@heroicons/react/outline'; 
+
 const items = [
     {
       key: '1',
@@ -35,13 +35,28 @@ const Home = () => {
   return (
     <Layout className='h-screen'>
       <Layout>
-        <Sider width={250} trigger={null} collapsible collapsed={collapsed}>
+        <Sider 
+          width={250} 
+          trigger={null} 
+          collapsible 
+          collapsed={collapsed}>
           <Layout 
             style={{backgroundColor: "#001529"}}
             className='h-16 flex justify-center items-center'>
-            <span className='text-white'> Logotipo </span>
+              <span className='text-white'> Logotipo </span>
           </Layout>
           <Layout>
+            <Layout className={ collapsed 
+              ? 'flex items-center justify-center' 
+              : 'flex items-end justify-center'}>           
+              <Button
+                style={{border: "none", backgroundColor: 'none', boxShadow: 'none'}}
+                onClick={toggleCollapsed}>
+                  {collapsed 
+                    ? <ChevronRightIcon className="w-6 h-6" /> 
+                    : <MenuAlt3Icon className="w-6 h-6" />}
+              </Button>
+            </Layout>
             <Menu
               theme="dark"
               mode="inline"
@@ -52,18 +67,9 @@ const Home = () => {
             />
           </Layout>
         </Sider>
-          <Layout>
-          <Header style={{backgroundColor: "whitesmoke", padding:0}}>
-            <Layout className='flex items-start justify-center'>           
-                <Button
-                  style={{border: "none", backgroundColor: 'none', boxShadow: 'none'}}
-                  onClick={toggleCollapsed}
-                >
-                  {collapsed ? <XIcon className="w-6 h-6" /> : <MenuAlt3Icon className="w-6 h-6" />}
-                </Button>
-              </Layout>
-        </Header>
-          <Content className='pr-8 pl-8 m-0 min-h-280'>
+        <Layout>
+          <Header style={{backgroundColor: "whitesmoke", padding:0}}></Header>
+          <Content className='pr-8 pl-8 m-0'>
             <Outlet/>
           </Content>
         </Layout>
