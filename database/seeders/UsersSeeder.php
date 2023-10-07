@@ -4,18 +4,12 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 
 class UsersSeeder extends Seeder
 {
     public function run()
     {
-        $roleWithPermissions = Role::create(['name' => 'admin']);
-        $permission = Permission::create(['name' => 'general']);
-        $roleWithPermissions->givePermissionTo($permission);
-
-        $userWithPermissions = User::create([
+        User::create([
             'name' => 'Erik',
             'firstname' => 'Viera',
             'secondname' => 'Olivares',
@@ -23,7 +17,6 @@ class UsersSeeder extends Seeder
             'email' => 'erikv@gmail.com',
             'password' => bcrypt('1234'),
         ]);
-        $userWithPermissions->assignRole($roleWithPermissions);
 
         User::create([
             'name' => 'Antonio',
