@@ -1,7 +1,40 @@
 import { UserIcon, LockClosedIcon } from '@heroicons/react/solid';
 import { ArrowRightIcon } from '@heroicons/react/outline'; 
+import { useState } from 'react';
+import axiosClient from '../axios';
+import { useStateContext } from "../contexts/ContextProvider";
 
 export default function Login() {
+
+  const { setCurrentUser, setUserToken } = useStateContext();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState({__html: ''});
+
+  const onSubmit = (ev) => {
+    ev.preventDefault();
+    setError({ __html: "" });
+
+    axiosClient
+      .post("/login", {
+        email,
+        password
+      })
+      .then(({data}) => {
+          setCurrentUser(data.user)
+          setUserToken(data.token)
+      })
+      .catch((error) => {
+          if (error.response){
+            const finalErrors = Object.values(error.response.data.errors).reduce(
+              (accum, next) => [...accum, ...next],
+              []
+            );
+            setError({__html: finalErrors.join('<br>')});
+          }
+      })
+  }
+
   return (
     <>
     <div className="flex justify-center items-center min-h-screen">
@@ -11,13 +44,23 @@ export default function Login() {
             Comercial Bibiano
           </span>
         </h2>
-        <form>
+        
+        {error.__html && (
+          <div
+            className="bg-red-500 rounded py-2 px-3 text-white"
+            dangerouslySetInnerHTML={error}
+          ></div>
+        )}
+
+        <form onSubmit={onSubmit} action="#" method="POST">
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2 inline-flex">
               <UserIcon className="w-5 h-5"/>Email
             </label>
             <div>
               <input id="email" type="email" 
+                    value={email}
+                    onChange={ev => setEmail(ev.target.value)} 
                     className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                     placeholder="Introduce tu email" 
                     required/>
@@ -28,7 +71,9 @@ export default function Login() {
               <LockClosedIcon className="w-5 h-5"/>Contraseña
             </label>
             <div>
-              <input id="password" type="password" 
+              <input id="password" type="password"
+                    value={password}
+                    onChange={ev => setPassword(ev.target.value)} 
                     className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                     placeholder="Introduce la contraseña" 
                     required/>
@@ -41,19 +86,13 @@ export default function Login() {
             </button>
           </div>
           {/*<div className="text-center mt-4">
-            <a href="#" className="text-gray-600 hover:underline">Forgot password?</a>
+            <a href="#" className="text-gray-600 hover:underline">¿Olvidaste la contraseña?</a>
           </div>*/}
         </form>
         <p className="text-center text-gray-600 mt-6">Si no tienes una cuenta, contacta con el administrador</p>
       {/*<div className="mt-4">
-          <p className="text-center text-gray-600">Or log in with:</p>
+          <p className="text-center text-gray-600">O accede con:</p>
           <div className="flex justify-center mt-2">
-            <a href="#" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2">
-              <i className="fab fa-facebook-f"></i>
-            </a>
-            <a href="#" className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded mx-2">
-              <i className="fab fa-twitter"></i>
-            </a>
             <a href="#" className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mx-2">
               <i className="fab fa-google"></i>
             </a>
