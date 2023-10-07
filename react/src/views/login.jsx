@@ -1,8 +1,7 @@
-import React from 'react';
 import { UserIcon, LockClosedIcon } from '@heroicons/react/solid';
 import { ArrowRightIcon } from '@heroicons/react/outline'; 
 
-export default function LoginForm() {
+export default function Login() {
   return (
     <>
     <div className="flex justify-center items-center min-h-screen">
