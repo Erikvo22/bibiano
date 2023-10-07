@@ -21,8 +21,12 @@ export default function Login() {
         password
       })
       .then(({data}) => {
-          setCurrentUser(data.user)
-          setUserToken(data.token)
+          if(data.error){
+            setError({__html: data.error});
+          }else{
+            setCurrentUser(data.user)
+            setUserToken(data.token)
+          }
       })
       .catch((error) => {
           if (error.response){
@@ -52,7 +56,7 @@ export default function Login() {
           ></div>
         )}
 
-        <form onSubmit={onSubmit} action="#" method="POST">
+        <form onSubmit={onSubmit} action="#" method="POST" className="mt-4">
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2 inline-flex">
               <UserIcon className="w-5 h-5"/>Email
