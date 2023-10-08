@@ -15,23 +15,15 @@ const StateContext = createContext({
 
 export const ContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState({});
-  const [userToken, _setUserToken] = useState(localStorage.getItem('TOKEN') || '');
-  const [toast, setToast] = useState({message: '', show: false})
+  const [userToken, _setUserToken] = useState(localStorage.getItem('token') || '');
 
   const setUserToken = (token) => {
     if (token) {
-      localStorage.setItem('TOKEN', token)
+      localStorage.setItem('token', token)
     } else {
-      localStorage.removeItem('TOKEN')
+      localStorage.removeItem('token')
     }
     _setUserToken(token);
-  }
-
-  const showToast = (message) => {
-    setToast({ message, show: true })
-    setTimeout(() => {
-      setToast({message: '', show: false})
-    }, 5000)
   }
 
   return (
@@ -40,9 +32,7 @@ export const ContextProvider = ({ children }) => {
         currentUser,
         setCurrentUser,
         userToken,
-        setUserToken,
-        toast,
-        showToast
+        setUserToken
       }}
     >
       {children}

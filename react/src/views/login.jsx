@@ -3,15 +3,21 @@ import { ArrowRightIcon } from '@heroicons/react/outline';
 import { useState } from 'react';
 import axiosClient from '../axios';
 import { useStateContext } from "../contexts/ContextProvider";
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
 
-  const { setCurrentUser, setUserToken } = useStateContext();
+  const { currentUser, userToken, setCurrentUser, setUserToken } = useStateContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState({__html: ''});
 
+  if (userToken) {
+    return <Navigate to="/users" />;
+  }
+
   const onSubmit = (ev) => {
+    const navigate = useNavigate();
     ev.preventDefault();
     setError({ __html: "" });
 
@@ -24,9 +30,11 @@ export default function Login() {
           if(data.error){
             setError({__html: data.error});
           }else{
-            setCurrentUser(data.user)
-            setUserToken(data.token)
+            setCurrentUser(data.user);
+            setUserToken(data.token);
           }
+          if (userToken) 
+            navigate("/users");
       })
       .catch((error) => {
           if (error.response){
