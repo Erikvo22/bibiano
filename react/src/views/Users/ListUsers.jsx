@@ -16,21 +16,25 @@ const columns = [
     title: 'DNI',
     dataIndex: 'dni',
     key: 'dni',
+    className: 'hidden lg:table-cell',
   },
   {
     title: 'Email',
     dataIndex: 'email',
     key: 'email',
+    className: 'hidden lg:table-cell',
   },
   {
     title: 'Movil',
     dataIndex: 'movil',
     key: 'movil',
+    className: ' hidden lg:table-cell',
   },
   {
     title: 'Rol',
     dataIndex: 'rol',
     key: 'rol',
+    className: 'hidden lg:table-cell',
   },
   {
     title: 'Activo',
