@@ -3,7 +3,7 @@ import { ArrowRightIcon } from '@heroicons/react/outline';
 import { useState } from 'react';
 import axiosClient from '../axios';
 import { useStateContext } from "../contexts/ContextProvider";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 
 export default function Login() {
 
@@ -11,13 +11,13 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState({__html: ''});
+  const navigate = useNavigate();
 
   if (userToken) {
-    return <Navigate to="/users" />;
+    return <Navigate to="/users" />
   }
 
   const onSubmit = (ev) => {
-    const navigate = useNavigate();
     ev.preventDefault();
     setError({ __html: "" });
 
@@ -64,7 +64,7 @@ export default function Login() {
           ></div>
         )}
 
-        <form onSubmit={onSubmit} action="#" method="POST" className="mt-4">
+        <form onSubmit={onSubmit} method="POST" className="mt-4">
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2 inline-flex">
               <UserIcon className="w-5 h-5"/>Email
