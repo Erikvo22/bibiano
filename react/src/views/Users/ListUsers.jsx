@@ -1,4 +1,3 @@
-import React from 'react';
 import { Table, Switch} from 'antd';
 
 const columns = [

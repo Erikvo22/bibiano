@@ -9,4 +9,7 @@ REACT -> 18
 - php artisan migrate
 - php artisan db:seed DatabaseSeeder
 - php artisan serve
-- react / npm run dev
+- react / npm run dev  
+  
+*** GENERATE JWT TOKEN ***  
+- php artisan jwt:secret

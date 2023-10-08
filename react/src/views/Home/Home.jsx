@@ -1,14 +1,18 @@
-import React, {useState}from 'react';
-import './home.css';
-import { Outlet, useNavigate } from 'react-router-dom';
+import React, {useState} from 'react';
+
+
+import { Outlet, useNavigate, Navigate } from 'react-router-dom';
 import { Layout, Menu, Button } from 'antd';
 import { UserIcon, ClockIcon, ChevronRightIcon, MenuAlt3Icon} from '@heroicons/react/outline'; 
+import { useStateContext } from "../../contexts/ContextProvider";
+
+import './home.css';
 
 const items = [
     {
       key: '1',
       label: 'Usuarios',
-      target: '/Users',
+      target: '/users',
       icon: <UserIcon className="w-5 h-5" />,
     },
     {
@@ -19,6 +23,13 @@ const items = [
 ];
 
 const Home = () => {
+  const { currentUser, userToken, setCurrentUser, setUserToken } =
+  useStateContext();
+
+  if (!userToken) {
+    return <Navigate to="/login" />;
+  }
+
   const [collapsed, setCollapsed] = useState(false);
 
   const { Header, Sider, Content } = Layout;
