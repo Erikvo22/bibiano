@@ -1,8 +1,12 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
+
+
 import { Outlet, useNavigate, Navigate } from 'react-router-dom';
 import { Layout, Menu, Button } from 'antd';
 import { UserIcon, ClockIcon, ChevronRightIcon, MenuAlt3Icon} from '@heroicons/react/outline'; 
 import { useStateContext } from "../../contexts/ContextProvider";
+
+import './home.css';
 
 const items = [
     {
@@ -47,7 +51,9 @@ const Home = () => {
           width={250} 
           trigger={null} 
           collapsible 
-          collapsed={collapsed}>
+          collapsed={collapsed}
+          onCollapse={(c,t) => toggleCollapsed()}
+          breakpoint='lg'>
           <Layout 
             style={{backgroundColor: "#001529"}}
             className='h-16 flex justify-center items-center'>
@@ -61,8 +67,8 @@ const Home = () => {
                 style={{border: "none", backgroundColor: 'none', boxShadow: 'none'}}
                 onClick={toggleCollapsed}>
                   {collapsed 
-                    ? <ChevronRightIcon className="w-6 h-6" /> 
-                    : <MenuAlt3Icon className="w-6 h-6" />}
+                    ? <ChevronRightIcon className="w-4 h-4" /> 
+                    : <MenuAlt3Icon className="w-4 h-4" />}
               </Button>
             </Layout>
             <Menu

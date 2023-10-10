@@ -16,6 +16,8 @@ class UsersSeeder extends Seeder
             'dni' => '11111111A',
             'email' => 'erikv@gmail.com',
             'password' => bcrypt('1234'),
+            'role' => 'USER',
+            'active' => true,
         ]);
 
         User::create([
@@ -25,6 +27,8 @@ class UsersSeeder extends Seeder
             'dni' => '11111111B',
             'email' => 'antonioj@gmail.com',
             'password' => bcrypt('1234'),
+            'role'=> 'ADMIN',
+            'active' => false,
         ]);
     }
 }
