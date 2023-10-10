@@ -22,11 +22,11 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->dateTime('last_login')->nullable();
-            $table->timestamps();
             $table->integer('access_number')->nullable();
             $table->string('role');
-            $table->integer('movile')->nullable();
+            $table->integer('mobile')->nullable();
             $table->boolean('active')->default(true);
+            $table->timestamps();
         });
     }
 
