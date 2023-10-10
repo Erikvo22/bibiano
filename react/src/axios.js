@@ -7,8 +7,6 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use((config) => {
   config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
-  console.log('hola');
-  console.log(import.meta.env.VITE_API_PUBLIC_KEY);
   return config
 });
 
