@@ -23,6 +23,10 @@ return new class extends Migration
             $table->rememberToken();
             $table->dateTime('last_login')->nullable();
             $table->timestamps();
+            $table->integer('access_number')->nullable();
+            $table->string('role');
+            $table->integer('movile')->nullable();
+            $table->boolean('active')->default(true);
         });
     }
 
