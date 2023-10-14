@@ -91,9 +91,9 @@ const ListUsers = () => {
     },
     {
       title: 'Movil',
-      dataIndex: 'movil',
-      ...getColumnSearchProps('movil'),
-      sorter: (a, b) => a.movil - b.movil,
+      dataIndex: 'mobile',
+      ...getColumnSearchProps('mobile'),
+      sorter: (a, b) => a.mobile - b.mobile,
       className: 'hidden lg:table-cell',
     },
     {

@@ -34,7 +34,7 @@ export default function Login() {
             setUserToken(data.token);
           }
           if (userToken) 
-            navigate("/users");
+            navigate("/dashboard");
       })
       .catch((error) => {
           if (error.response){
