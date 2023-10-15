@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
@@ -33,3 +34,8 @@ Route::group(['middleware' => 'api-header'], function ()
 {
     Route::post('/login', [AuthController::class, 'login']);
 });
+
+Route::controller(UserController::class)->group(function () {
+    Route::post('/user', 'store');
+    Route::put('/user/{id}', 'update');
+  });
