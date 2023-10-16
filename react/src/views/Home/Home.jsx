@@ -1,9 +1,7 @@
 import React, {useState} from 'react';
-
-
 import { Outlet, useNavigate, Navigate } from 'react-router-dom';
 import { Layout, Menu, Button } from 'antd';
-import { UserIcon, ClockIcon, ChevronRightIcon, MenuAlt3Icon} from '@heroicons/react/outline'; 
+import { UserIcon, ClockIcon, ChevronRightIcon, MenuAlt3Icon, HomeIcon} from '@heroicons/react/outline'; 
 import { useStateContext } from "../../contexts/ContextProvider";
 
 import './home.css';
@@ -11,12 +9,18 @@ import './home.css';
 const items = [
     {
       key: '1',
+      label: 'Inicio',
+      target: '/dashboard',
+      icon: <HomeIcon className="w-5 h-5" />,
+    },
+    {
+      key: '2',
       label: 'Usuarios',
       target: '/users',
       icon: <UserIcon className="w-5 h-5" />,
     },
     {
-      key: '2',
+      key: '3',
       label: 'Historial de fichajes',
       icon: <ClockIcon className="w-5 h-5" />,
     },
