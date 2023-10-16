@@ -26,6 +26,10 @@ const ListUsers = () => {
         navigate("/user/nuevo");
     };
 
+    const handleDoubleClick = (record) => {
+        navigate(`/user/${record.id}`, { state: { user: record } });
+    };
+
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
         setSearchText(selectedKeys[0]);
@@ -190,7 +194,17 @@ const ListUsers = () => {
                     Nuevo Usuario
                 </Button>
             </Row>
-            <Table columns={columns} dataSource={data} rowKey="id" />
+            <Table
+                columns={columns}
+                dataSource={data}
+                onDoubleClick
+                onRow={(record) => ({
+                    onDoubleClick: () => {
+                        handleDoubleClick(record);
+                    },
+                })}
+                rowKey="id"
+            />
         </>
     );
 };

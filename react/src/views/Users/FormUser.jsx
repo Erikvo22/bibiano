@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Row, Col, Form, Input, Select, Button, Alert } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axiosClient from "../../axios";
 import "./User.css";
 
 const FormUser = ({ user }) => {
     const navigate = useNavigate();
     const [userCreatedError, setUserCreatedError] = useState({});
+
     const onFinish = (values) => {
         axiosClient({
             url: "/user",
@@ -59,18 +60,25 @@ const FormUser = ({ user }) => {
 
 const Template = ({ onFinish, onCancel, user }) => {
     const [form] = Form.useForm();
-
-    if (user !== undefined) {
+    const location = useLocation();
+    debugger;
+    if (location.state?.user) {
         form.setFieldsValue({
-            name: user?.name,
-            firstname: user?.firstname,
-            secondname: user?.secondname,
-            dni: user?.dni,
-            mobile: user?.mobile,
-            email: user?.email,
-            password: user?.password,
-            role: user?.role,
+            ...location.state.user,
         });
+    } else {
+        if (user !== undefined) {
+            form.setFieldsValue({
+                name: user?.name,
+                firstname: user?.firstname,
+                secondname: user?.secondname,
+                dni: user?.dni,
+                mobile: user?.mobile,
+                email: user?.email,
+                password: user?.password,
+                role: user?.role,
+            });
+        }
     }
 
     return (
