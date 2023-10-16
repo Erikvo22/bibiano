@@ -14,7 +14,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   if (userToken) {
-    return <Navigate to="/users" />
+    return <Navigate to="/dashboard" />
   }
 
   const onSubmit = (ev) => {
@@ -34,7 +34,7 @@ export default function Login() {
             setUserToken(data.token);
           }
           if (userToken) 
-            navigate("/users");
+            navigate("/dashboard");
       })
       .catch((error) => {
           if (error.response){
