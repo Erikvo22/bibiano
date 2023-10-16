@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Space, Typography, Row, Col } from 'antd';
-import { PlayIcon, PauseIcon } from '@heroicons/react/outline';
+import { Layout, Button, Card, Space, Typography, Row, Col, Modal } from 'antd';
+import { ExclamationCircleFilled } from '@ant-design/icons';
+import { CalendarIcon, PlayIcon, PauseIcon } from '@heroicons/react/outline';
 
 const { Text } = Typography;
+const { Title } = Typography;
+const { confirm } = Modal;
 
 const App = () => {
   const [userName, setUserName] = useState('NOMBRE_USUARIO');
@@ -25,34 +28,64 @@ const App = () => {
   }, [isWorking, startTime]);
 
   const toggleWork = () => {
-    if (isWorking) {
-      setIsWorking(false);
-      setElapsedTime(0);
-    } else {
-      setIsWorking(true);
-      setStartTime(Date.now());
-    }
+    confirm({
+      title: '¿Está seguro de realizar el fichaje?',
+      icon: <ExclamationCircleFilled />,
+      content: '',
+      okText: 'Sí',
+      cancelText: 'Cancelar',
+      okButtonProps: {
+        style: { background: 'green', color: 'white' }
+      },
+      onOk() {
+        if (isWorking) {
+          setIsWorking(false);
+          setElapsedTime(0);
+        } else {
+          setIsWorking(true);
+          setStartTime(Date.now());
+        }
+      },
+      onCancel() {
+      },
+    });
   };
 
   return (
-    <Row justify="center">
-      <Col xs={24} sm={18} md={12} lg={8} xl={6}>
-        <Card>
-          <Space direction="vertical">
-            <Text>¡Hola {userName}!</Text>
-            <Text>Fecha actual: {new Date().toLocaleDateString()}</Text>
-            <Text>Tiempo de trabajo: {formatTime(elapsedTime)}</Text>
-            <Button
-              type={isWorking ? 'dashed' : 'primary'}
+    <Layout className='h-screen'>
+      <Row>
+        <Text>¡Hola <b>{userName}!</b></Text>
+      </Row>
+      <Row justify="center" className='mt-4' gutter={24}>
+        <Col span={24}>
+          <Card>
+            <Space direction="vertical" style={{ width: "100%" }}>
+              <Text className='inline-flex'> 
+                <CalendarIcon color='green' className="w-5 h-5"/> 
+                <p className='ml-2'>Tu trabajo durante el {new Date().toLocaleDateString()}</p>
+              </Text>
+
+              <Title level={2} className='flex justify-center items-center'>
+                {formatTime(elapsedTime)}
+              </Title>
+            </Space>
+          </Card>
+        </Col>
+      </Row>
+      <Row justify="center" className='mt-2' gutter={24}>
+        <Col span={24} className='flex justify-center align-items-center'>
+          <Button
+              type='primary'
               onClick={toggleWork}
-              icon={isWorking ? <PauseIcon /> : <PlayIcon />}
-            >
-              {isWorking ? 'Pausar jornada laboral' : 'Empezar jornada laboral'}
-            </Button>
-          </Space>
-        </Card>
-      </Col>
-    </Row>
+              style={isWorking ? { background: "red" } : {background: "green"}}>
+              {isWorking ? 
+              (<p className='inline-flex'><PauseIcon className="w-5 h-5"/> <p className='ml-2'>Pausar jornada laboral</p></p>) 
+              : (<p className="inline-flex"><PlayIcon className="w-5 h-5"/> <p className='ml-2'>Empezar jornada laboral</p></p>)
+              }
+          </Button>
+        </Col>
+      </Row>
+    </Layout>
   );
 };
 
