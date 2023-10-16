@@ -1,9 +1,9 @@
-import { Table, Switch, Input, Row, Button } from "antd";
+import { Table, Switch, Input, Row, Button, Alert } from "antd";
 import { useEffect, useState, useRef } from "react";
 import axiosClient from "../../axios";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const onAvailabilityChange = (record) => {
     record.activo = !record.activo;
@@ -13,8 +13,14 @@ const ListUsers = () => {
     const searchInput = useRef(null);
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
+    const [userModifyInfo, setUserModifyInfo] = useState();
     const [data, setData] = useState([]);
     const navigate = useNavigate();
+
+    const location = useLocation();
+    useEffect(() => {
+        location.state?.success && setUserModifyInfo(location.state);
+    }, [location]);
 
     const handleClick = () => {
         navigate("/user/nuevo");
@@ -27,13 +33,7 @@ const ListUsers = () => {
     };
 
     const getColumnSearchProps = (dataIndex) => ({
-        filterDropdown: ({
-            setSelectedKeys,
-            selectedKeys,
-            confirm,
-            clearFilters,
-            close,
-        }) => (
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => (
             <Input
                 refix={<SearchOutlined />}
                 ref={searchInput}
@@ -112,14 +112,14 @@ const ListUsers = () => {
         },
         {
             title: "Rol",
-            dataIndex: "role",
+            dataIndex: "role_description",
             filters: [
                 {
                     text: "ADMIN",
                     value: "ADMIN",
                 },
                 {
-                    text: "USER",
+                    text: "EMPLEADO",
                     value: "USER",
                 },
             ],
@@ -157,6 +157,9 @@ const ListUsers = () => {
             .then((response) => {
                 const usersSerialized = response.data.data.map((user) => {
                     user.active = user.active === 1 ? true : false;
+                    user.mobile = user.mobile === null ? "" : user.mobile;
+                    user.role_description =
+                        user.role === "ADMIN" ? "Admin" : "Empleado";
                     return {
                         ...user,
                         surname: user.firstname + " " + user.secondname,
@@ -164,13 +167,18 @@ const ListUsers = () => {
                 });
                 setData(usersSerialized);
             })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, [setData]);
+            .catch((error) => {});
+    }, []);
 
     return (
         <>
+            {userModifyInfo && userModifyInfo.success && (
+                <Alert
+                    message={userModifyInfo.message}
+                    type="success"
+                    closable
+                />
+            )}
             <h1 className="pb-4 text-2xl">Listado de usuarios</h1>
             <Row className="mb-4" justify="end">
                 <Button

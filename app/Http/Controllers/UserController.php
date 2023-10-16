@@ -21,6 +21,9 @@ class UserController extends Controller
             'mobile' => 'sometimes|string|max:14',
             'email' => 'required|string|email|max:128|unique:users',
             'password' => 'required|string|min:8|max:128',
+        ],[
+            'email.unique' => 'El correo electrónico ya está en uso.',
+            'dni.unique' => 'El dni ya está en uso.',
         ]);
         
         if ($validator->fails()) {
@@ -39,7 +42,7 @@ class UserController extends Controller
         $user->secondname = $validatedData['secondname'] ?? '';
         $user->dni = $validatedData['dni'] ?? '';
         $user->role = $validatedData['role'];
-        $user->mobile = $validatedData['mobile'] ?? '';
+        $user->mobile = $validatedData['mobile'] ?? null;
         $user->email = $validatedData['email'];
         $user->password = bcrypt($validatedData['password']);
         $user->save();
@@ -63,6 +66,9 @@ class UserController extends Controller
             'mobile' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,',
             'password' => 'nullable|string|min:8',
+        ],[
+            'email.unique' => 'El correo electrónico ya está en uso.',
+            'dni.unique' => 'El dni ya está en uso.',
         ]);
 
         $user = User::find($id);
