@@ -4,23 +4,61 @@ import axiosClient from "../../axios";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import { useNavigate, useLocation } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const onAvailabilityChange = (record) => {
-    record.activo = !record.activo;
+const onAvailabilityChange = (record, checked) => {
+    axiosClient({
+        url: `/user/active`,
+        method: "POST",
+        data: {
+            active: checked,
+            id: record.id,
+        },
+    })
+        .then((response) => {
+            record.active = checked;
+            toast.success(response.data.message);
+        })
+        .catch((error) => {
+            record.active = !checked;
+            toast.error(error.data.message);
+        });
 };
 
 const ListUsers = () => {
     const searchInput = useRef(null);
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
-    const [userModifyInfo, setUserModifyInfo] = useState();
     const [data, setData] = useState([]);
     const navigate = useNavigate();
-
     const location = useLocation();
+
     useEffect(() => {
-        location.state?.success && setUserModifyInfo(location.state);
-    }, [location]);
+        axiosClient({
+            url: "/users/list",
+        })
+            .then((response) => {
+                const usersSerialized = response.data.data.map((user) => {
+                    user.active = user.active === 1 ? true : false;
+                    user.mobile = user.mobile === null ? "" : user.mobile;
+                    user.role_description =
+                        user.role === "ADMIN" ? "Admin" : "Empleado";
+                    return {
+                        ...user,
+                        surname: user.firstname + " " + user.secondname,
+                    };
+                });
+                setData(usersSerialized);
+                if (location.state?.success) {
+                    toast.success("Nuevo usuario creado.");
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
 
     const handleClick = () => {
         navigate("/user/nuevo");
@@ -148,63 +186,43 @@ const ListUsers = () => {
             render: (record) => (
                 <Switch
                     defaultChecked={record.active}
-                    onClick={() => onAvailabilityChange(record)}
+                    onChange={(checked) =>
+                        onAvailabilityChange(record, checked)
+                    }
                 />
             ),
         },
     ];
 
-    useEffect(() => {
-        axiosClient({
-            url: "/users/list",
-        })
-            .then((response) => {
-                const usersSerialized = response.data.data.map((user) => {
-                    user.active = user.active === 1 ? true : false;
-                    user.mobile = user.mobile === null ? "" : user.mobile;
-                    user.role_description =
-                        user.role === "ADMIN" ? "Admin" : "Empleado";
-                    return {
-                        ...user,
-                        surname: user.firstname + " " + user.secondname,
-                    };
-                });
-                setData(usersSerialized);
-            })
-            .catch((error) => {});
-    }, []);
-
     return (
         <>
-            {userModifyInfo && userModifyInfo.success && (
-                <Alert
-                    message={userModifyInfo.message}
-                    type="success"
-                    closable
-                />
+            {data.length > 0 && (
+                <>
+                    <ToastContainer />
+                    <h1 className="pb-4 text-2xl">Listado de usuarios</h1>
+                    <Row className="mb-4" justify="end">
+                        <Button
+                            icon={<PlusOutlined />}
+                            className="button-antd-custom"
+                            type="primary"
+                            onClick={handleClick}
+                        >
+                            Nuevo Usuario
+                        </Button>
+                    </Row>
+                    <Table
+                        columns={columns}
+                        dataSource={data}
+                        onDoubleClick
+                        onRow={(record) => ({
+                            onDoubleClick: () => {
+                                handleDoubleClick(record);
+                            },
+                        })}
+                        rowKey="id"
+                    />
+                </>
             )}
-            <h1 className="pb-4 text-2xl">Listado de usuarios</h1>
-            <Row className="mb-4" justify="end">
-                <Button
-                    icon={<PlusOutlined />}
-                    className="button-antd-custom"
-                    type="primary"
-                    onClick={handleClick}
-                >
-                    Nuevo Usuario
-                </Button>
-            </Row>
-            <Table
-                columns={columns}
-                dataSource={data}
-                onDoubleClick
-                onRow={(record) => ({
-                    onDoubleClick: () => {
-                        handleDoubleClick(record);
-                    },
-                })}
-                rowKey="id"
-            />
         </>
     );
 };

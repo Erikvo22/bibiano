@@ -17,10 +17,6 @@ use App\Models\User;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::group(['middleware' => ['jwt.auth','api-header']], function () 
 {  
     Route::get('users/list', function(){
@@ -28,6 +24,14 @@ Route::group(['middleware' => ['jwt.auth','api-header']], function ()
         $response = ['success'=>true, 'data'=>$users];
         return response()->json($response, 201);
     });
+
+    Route::controller(UserController::class)->group(
+        function() {
+            Route::post('/user', 'store');
+            Route::put('/user/{id}', 'update');
+            Route::post('/user/active',  'toggleActive');
+        }
+    );
 });
 
 Route::group(['middleware' => 'api-header'], function () 
@@ -35,7 +39,4 @@ Route::group(['middleware' => 'api-header'], function ()
     Route::post('/login', [AuthController::class, 'login']);
 });
 
-Route::controller(UserController::class)->group(function () {
-    Route::post('/user', 'store');
-    Route::put('/user/{id}', 'update');
-  });
+

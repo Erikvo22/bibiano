@@ -2,8 +2,7 @@ import axios from "axios";
 import router from "./router";
 
 const axiosClient = axios.create({
-  // baseURL: import.meta.env.VITE_API_PUBLIC_KEY,
-  baseURL: '127.0.0.1:8000',
+  baseURL: import.meta.env.VITE_API_PUBLIC_KEY,
 });
 
 axiosClient.interceptors.request.use((config) => {

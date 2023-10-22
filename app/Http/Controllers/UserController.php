@@ -57,7 +57,6 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        dd($id);
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:50',
             'firstname' => 'sometimes|string|max:50',
@@ -71,8 +70,9 @@ class UserController extends Controller
             'email.unique' => 'El correo electrónico ya está en uso.',
             'dni.unique' => 'El dni ya está en uso.',
         ]);
+        // Comprobar si el dni o el email, no pertenecen a otro usuario que no sea el actual
+        $validatedData = $validator->validated();
 
-        dd($validator);
         $user = User::find($id);
         $user->name = $validatedData['name'];
         $user->firstname = $validatedData['firstname'];
@@ -89,6 +89,29 @@ class UserController extends Controller
         return new JsonResponse([
             'success' => true,
             'message' => 'Usuario actualizado correctamente.',
+            'user' => $user,
+        ]);
+    }
+    
+    public function toggleActive(Request $request)
+    {
+        $data = $request->all();
+
+        $user = User::find($data['id']);
+
+        if (!$user) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Usuario no encontrado.',
+            ]);
+        }
+    
+        $user->active = $data['active'];
+        $user->save();
+    
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'Estado de usuario actualizado correctamente.',
             'user' => $user,
         ]);
     }
