@@ -8,12 +8,16 @@ import "./User.css";
 const FormUser = ({ user }) => {
     const navigate = useNavigate();
     const [userCreatedError, setUserCreatedError] = useState({});
+    const location = useLocation();
 
-    const onFinish = (values) => {
+    const onFinish = (value) => {
+        debugger;
+        console.log(location);
+        const esNuevoUsuario = location.pathname.includes("/nuevo");
         axiosClient({
-            url: "/user",
-            method: "POST",
-            data: values,
+            url: esNuevoUsuario ? "/user" : `/user/${value.id}`,
+            method: esNuevoUsuario ? "POST" : "PUT",
+            data: value,
         })
             .then((response) => {
                 if (response.data.success) {
@@ -91,6 +95,11 @@ const Template = ({ onFinish, onCancel, user }) => {
                     onFinish={onFinish}
                     initialValues={user}
                 >
+                    <Form.Item
+                        className="hidden"
+                        label="id"
+                        name="id"
+                    ></Form.Item>
                     <Row>
                         <Col span={24}>
                             <Form.Item
@@ -106,7 +115,6 @@ const Template = ({ onFinish, onCancel, user }) => {
                                 <Input
                                     className="input-antd-custom"
                                     placeholder="Nombre"
-                                    pattern="[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+"
                                     maxLength={50}
                                 />
                             </Form.Item>
@@ -118,7 +126,6 @@ const Template = ({ onFinish, onCancel, user }) => {
                                 <Input
                                     className="input-antd-custom"
                                     placeholder="Primer Apellido"
-                                    pattern="[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+"
                                     maxLength={50}
                                 />
                             </Form.Item>
@@ -131,7 +138,6 @@ const Template = ({ onFinish, onCancel, user }) => {
                                 <Input
                                     className="input-antd-custom"
                                     placeholder="Segundo Apellido"
-                                    pattern="[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+"
                                     maxLength={50}
                                 />
                             </Form.Item>
