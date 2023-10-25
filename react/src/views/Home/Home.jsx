@@ -15,15 +15,16 @@ const items = [
     },
     {
       key: '2',
-      label: 'Usuarios',
-      target: '/users',
-      icon: <UserIcon className="w-5 h-5" />,
+      label: 'Mis fichajes',
+      target: '/my-clocks',
+      icon: <ClockIcon className="w-5 h-5" />,
     },
     {
       key: '3',
-      label: 'Historial de fichajes',
-      icon: <ClockIcon className="w-5 h-5" />,
-    },
+      label: 'Usuarios',
+      target: '/users',
+      icon: <UserIcon className="w-5 h-5" />,
+    }
 ];
 
 const Home = () => {

@@ -36,6 +36,7 @@ Route::group(['middleware' => ['jwt.auth','api-header']], function ()
 
     Route::controller(ClockingController::class)->group(function () {
         Route::get('clocks/list', 'getClocksActualDay');
+        Route::get('clocks/all', 'getClocksByUser');
         Route::post('clocks/save', 'store');
     });
 });

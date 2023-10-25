@@ -4,6 +4,7 @@ import Home from "./views/Home/Home.jsx";
 import ListUsers from "./views/Users/ListUsers.jsx";
 import Dashboard from "./views/Dashboard/Dashboard.jsx";
 import FormUser from "./views/Users/FormUser.jsx";
+import MyClocks from "./views/MyClocks/MyClocks.jsx";
 
 const router = createBrowserRouter([
     {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
             {
                 path: '/dashboard',
                 element: <Dashboard />
+            },
+            {
+                path: '/my-clocks',
+                element: <MyClocks /> 
             },
             {
                 path: '/users',

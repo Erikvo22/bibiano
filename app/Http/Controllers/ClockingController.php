@@ -25,6 +25,22 @@ class ClockingController extends Controller
         ]);
     }
 
+    public function getClocksByUser() : JsonResponse
+    {
+        $user = Auth::user();
+        $clocks = Clocking::where('user_id', $user['id'])
+                ->orderBy('date', 'DESC')
+                ->get()
+                ->groupBy(function($d) {
+                    return Carbon::parse($d->date)->format('Y-m-d');
+                });
+
+        return new JsonResponse([
+            'data' => $clocks,
+            'user' => $user
+        ]);
+    }
+
     public function store(Request $request) : JsonResponse
     {       
         $user = Auth::user();
