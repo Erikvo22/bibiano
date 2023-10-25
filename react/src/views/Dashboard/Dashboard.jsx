@@ -2,30 +2,68 @@ import React, { useState, useEffect } from 'react';
 import { Layout, Button, Card, Space, Typography, Row, Col, Modal } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { CalendarIcon, PlayIcon, PauseIcon } from '@heroicons/react/outline';
+import axiosClient from "../../axios";
 
 const { Text } = Typography;
 const { Title } = Typography;
 const { confirm } = Modal;
 
 const App = () => {
-  const [userName, setUserName] = useState('NOMBRE_USUARIO');
+  const [userName, setUserName] = useState('');
+  const [clocks, setClocks] = useState([]);
+  const [worked, setWorked] = useState(0); 
   const [isWorking, setIsWorking] = useState(false);
-  const [startTime, setStartTime] = useState(null);
-  const [elapsedTime, setElapsedTime] = useState(0);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
-    let interval;
+    getClocks();
+  }, []);
+  
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCount(count + 1);
+    }, 100);
 
-    if (isWorking) {
-      interval = setInterval(() => {
-        setElapsedTime(Date.now() - startTime);
-      }, 1000);
-    } else {
-      clearInterval(interval);
+    if (clocks.length % 2 !== 0){
+      setIsWorking(true);
+    }else{
+      setIsWorking(false);
     }
 
-    return () => clearInterval(interval);
-  }, [isWorking, startTime]);
+    let total = 0;
+    for (let i = 0; i < clocks.length; i += 2) {
+      const input = clocks[i] ? new Date(clocks[i].date) : null;
+      const output = clocks[i + 1] ? new Date(clocks[i + 1].date) : null;
+
+      if (input && output) {
+        const auxCalc = output - input;
+        total += auxCalc;
+      }else if(input){
+        total += Date.now() - input;
+      }
+    }
+
+    const seconds = Math.floor(total / 1000);
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secondsRestants = seconds % 60;
+
+    const formatedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secondsRestants).padStart(2, '0')}`;
+    setWorked(formatedTime);
+    return () => clearInterval(intervalId);
+  }, [count]);
+
+  const getClocks = () => {
+    axiosClient({
+      url: "/clocks/list",
+      method: "GET"
+    })
+      .then((response) => {
+          setClocks(response.data.data);
+          setUserName(response.data.username);
+      })
+      .catch((error) => {});
+  }
 
   const toggleWork = () => {
     confirm({
@@ -40,21 +78,32 @@ const App = () => {
       onOk() {
         if (isWorking) {
           setIsWorking(false);
-          setElapsedTime(0);
         } else {
           setIsWorking(true);
-          setStartTime(Date.now());
         }
+        saveClock(isWorking ? 2 : 1);
       },
       onCancel() {
       },
     });
-  };
+  }
+
+  const saveClock = (type) => {
+    axiosClient({
+      url: "/clocks/save",
+      method: "POST",
+      data: {'type': type}
+    })
+      .then((response) => {
+        getClocks();
+      })
+      .catch((error) => {});
+  }
 
   return (
     <Layout className='h-screen'>
       <Row>
-        <Text>¡Hola <b>{userName}!</b></Text>
+        <Text>¡Hola <b>{userName}</b>!</Text>
       </Row>
       <Row justify="center" className='mt-4' gutter={24}>
         <Col span={24}>
@@ -66,7 +115,7 @@ const App = () => {
               </Text>
 
               <Title level={2} className='flex justify-center items-center'>
-                {formatTime(elapsedTime)}
+                {worked != 0 ? worked : '00:00:00'}
               </Title>
             </Space>
           </Card>
@@ -87,14 +136,6 @@ const App = () => {
       </Row>
     </Layout>
   );
-};
-
-const formatTime = (milliseconds) => {
-  const seconds = Math.floor(milliseconds / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-
-  return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
 };
 
 export default App;

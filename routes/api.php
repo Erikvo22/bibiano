@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ClockingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
@@ -23,10 +24,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['middleware' => ['jwt.auth','api-header']], function () 
 {  
-    Route::get('users/list', function(){
-        $users = User::all();
-        $response = ['success'=>true, 'data'=>$users];
-        return response()->json($response, 201);
+    Route::controller(UserController::class)->group(function () {
+        Route::post('/user', 'store');
+        Route::put('/user/{id}', 'update');
+        Route::get('users/list', function(){
+            $users = User::all();
+            $response = ['success'=>true, 'data'=>$users];
+            return response()->json($response, 201);
+        });
+    });
+
+    Route::controller(ClockingController::class)->group(function () {
+        Route::get('clocks/list', 'getClocksActualDay');
+        Route::post('clocks/save', 'store');
     });
 });
 
@@ -34,8 +44,3 @@ Route::group(['middleware' => 'api-header'], function ()
 {
     Route::post('/login', [AuthController::class, 'login']);
 });
-
-Route::controller(UserController::class)->group(function () {
-    Route::post('/user', 'store');
-    Route::put('/user/{id}', 'update');
-  });
