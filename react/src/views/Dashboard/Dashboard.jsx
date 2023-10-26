@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Layout, Button, Card, Space, Typography, Row, Col, Modal } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { CalendarIcon, PlayIcon, PauseIcon } from '@heroicons/react/outline';
+import { useStateContext } from "../../contexts/ContextProvider";
+import { useNavigate } from 'react-router-dom';
 import axiosClient from "../../axios";
 
 const { Text } = Typography;
@@ -9,20 +11,28 @@ const { Title } = Typography;
 const { confirm } = Modal;
 
 const App = () => {
+  const { currentUser, userToken, setCurrentUser, setUserToken } = useStateContext();
   const [userName, setUserName] = useState('');
   const [clocks, setClocks] = useState([]);
   const [worked, setWorked] = useState(0); 
   const [isWorking, setIsWorking] = useState(false);
   const [count, setCount] = useState(0);
+  const navigate = useNavigate();
+
+  if (!userToken) {
+    navigate('/login');
+  }
 
   useEffect(() => {
-    getClocks();
+    if (userToken) {
+      getClocks();
+    }
   }, []);
   
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCount(count + 1);
-    }, 100);
+    }, 1000);
 
     if (clocks.length % 2 !== 0){
       setIsWorking(true);
@@ -103,7 +113,7 @@ const App = () => {
   return (
     <Layout className='h-screen'>
       <Row>
-        <Text>¡Hola <b>{userName}</b>!</Text>
+        <h1 className="pb-4 text-2xl">¡Hola <b>{userName}</b>!</h1>
       </Row>
       <Row justify="center" className='mt-4' gutter={24}>
         <Col span={24}>

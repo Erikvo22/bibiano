@@ -1,16 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Button, Card, Space, Typography, Row, Col, Modal } from 'antd';
+import { useStateContext } from "../../contexts/ContextProvider";
+import { useNavigate } from 'react-router-dom';
 import axiosClient from "../../axios";
 
 const { Text } = Typography;
 const { Title } = Typography;
 
 const MyClocks = () => {
+  const { currentUser, userToken, setCurrentUser, setUserToken } = useStateContext();
   const [user, setUser] = useState('');
   const [clocks, setClocks] = useState([]);
+  const navigate = useNavigate();
+
+  if (!userToken) {
+    navigate('/login');
+  }
 
   useEffect(() => {
-    getClocks();
+    if (userToken) {
+      getClocks();
+    }
   }, []);
 
   const getClocks = () => {
@@ -28,7 +38,7 @@ const MyClocks = () => {
   return (
     <Layout className='h-screen'>
         <Row>
-            <Text>Mis fichajes</Text>
+          <h1 className="pb-4 text-2xl">Mis fichajes</h1>
         </Row>
         <Row>
         </Row>
