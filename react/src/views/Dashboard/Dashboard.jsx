@@ -32,7 +32,7 @@ const App = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCount(count + 1);
-    }, 1000);
+    }, 100);
 
     if (clocks.length % 2 !== 0){
       setIsWorking(true);

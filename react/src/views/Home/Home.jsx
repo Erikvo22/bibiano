@@ -94,7 +94,7 @@ const Home = () => {
             <Menu
               theme="dark"
               mode="inline"
-              defaultSelectedKeys={['1']}
+              defaultSelectedKeys={['0']}
               items={items}
               onClick={handleMenuClick}
               inlineCollapsed={collapsed}
