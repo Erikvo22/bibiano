@@ -4,20 +4,26 @@ import axiosClient from "../../axios";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useStateContext } from "../../contexts/ContextProvider";
 
 const onAvailabilityChange = (record) => {
     record.activo = !record.activo;
 };
 
 const ListUsers = () => {
+    const { currentUser, userToken, setCurrentUser, setUserToken } = useStateContext();
     const searchInput = useRef(null);
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
     const [userModifyInfo, setUserModifyInfo] = useState();
     const [data, setData] = useState([]);
     const navigate = useNavigate();
-
     const location = useLocation();
+
+    if (!userToken) {
+        navigate('/login');
+    }
+
     useEffect(() => {
         location.state?.success && setUserModifyInfo(location.state);
     }, [location]);

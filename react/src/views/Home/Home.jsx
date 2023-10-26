@@ -1,12 +1,34 @@
 import React, {useState} from 'react';
-import { Outlet, useNavigate, Navigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Layout, Menu, Button } from 'antd';
-import { UserIcon, ClockIcon, ChevronRightIcon, MenuAlt3Icon, HomeIcon} from '@heroicons/react/outline'; 
+import { UserIcon, ClockIcon, ChevronRightIcon, MenuAlt3Icon, HomeIcon, ArrowSmLeftIcon} from '@heroicons/react/outline'; 
 import { useStateContext } from "../../contexts/ContextProvider";
+import axiosClient from "../../axios";
 
 import './home.css';
 
-const items = [
+const Home = () => {
+  const { currentUser, userToken, setCurrentUser, setUserToken } = useStateContext();
+  const [collapsed, setCollapsed] = useState(false);
+  const { Header, Sider, Content } = Layout;
+  const navigate = useNavigate();
+
+  if (!userToken) {
+    navigate('/login');
+  }
+
+  const logout = () => {
+    axiosClient({
+      url: "/logout",
+      method: "GET"
+    })
+    .then((response) => {
+      navigate('/login');
+    })
+    .catch((error) => {});
+  }
+
+  const items = [
     {
       key: '1',
       label: 'Inicio',
@@ -15,29 +37,23 @@ const items = [
     },
     {
       key: '2',
+      label: 'Mis fichajes',
+      target: '/my-clocks',
+      icon: <ClockIcon className="w-5 h-5" />,
+    },
+    {
+      key: '3',
       label: 'Usuarios',
       target: '/users',
       icon: <UserIcon className="w-5 h-5" />,
     },
     {
-      key: '3',
-      label: 'Historial de fichajes',
-      icon: <ClockIcon className="w-5 h-5" />,
-    },
-];
-
-const Home = () => {
-  const { currentUser, userToken, setCurrentUser, setUserToken } =
-  useStateContext();
-
-  if (!userToken) {
-    return <Navigate to="/login" />;
-  }
-
-  const [collapsed, setCollapsed] = useState(false);
-
-  const { Header, Sider, Content } = Layout;
-  const navigate = useNavigate();
+      key: '4',
+      label: 'Cerrar sesión',
+      onClick: logout,
+      icon: <ArrowSmLeftIcon className="w-5 h-5" />,
+    }
+  ];
 
   const handleMenuClick = ({ key }) => {
     const itemClicked = items.find((item) => item.key === key);

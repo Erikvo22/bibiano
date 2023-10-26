@@ -13,3 +13,5 @@ REACT -> 18
   
 *** GENERATE JWT TOKEN ***  
 - php artisan jwt:secret
+
+VITE_API_PUBLIC_KEY=''

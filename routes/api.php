@@ -24,6 +24,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['middleware' => ['jwt.auth','api-header']], function () 
 {  
+    Route::get('/logout', [AuthController::class, 'logout']);
+
     Route::controller(UserController::class)->group(function () {
         Route::post('/user', 'store');
         Route::put('/user/{id}', 'update');
@@ -36,6 +38,7 @@ Route::group(['middleware' => ['jwt.auth','api-header']], function ()
 
     Route::controller(ClockingController::class)->group(function () {
         Route::get('clocks/list', 'getClocksActualDay');
+        Route::get('clocks/all', 'getClocksByUser');
         Route::post('clocks/save', 'store');
     });
 });
