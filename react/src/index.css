@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media(max-width: 576px) { 
+    .ant-picker-panels { 
+      flex-direction: column;
+    } 
+  }
