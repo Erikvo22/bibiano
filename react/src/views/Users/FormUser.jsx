@@ -150,10 +150,10 @@ const Template = ({ onFinish, onCancel, user }) => {
                             </Form.Item>
                         </Col>
                         <Col xs={24} sm={24} lg={{ span: 11, offset: 1 }}>
-                            <Form.Item label="Telefono" name="mobile">
+                            <Form.Item label="Teléfono" name="mobile">
                                 <Input
                                     className="input-antd-custom"
-                                    placeholder="Telefono"
+                                    placeholder="Teléfono"
                                     pattern="[0-9]+"
                                     maxLength={14}
                                 />
@@ -204,7 +204,7 @@ const Template = ({ onFinish, onCancel, user }) => {
                                 ]}
                             >
                                 <Input.Password
-                                    placeholder="input password"
+                                    placeholder="Introduce la contraseña"
                                     iconRender={(visible) =>
                                         visible ? (
                                             <EyeTwoTone />

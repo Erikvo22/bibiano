@@ -1,3 +1,10 @@
 .ant-table table { 
     font-size: 14px; 
 }
+
+.ant-side-custom{
+    position: fixed !important;
+    top: 0;
+    bottom: 0;
+    z-index: 1000;
+}

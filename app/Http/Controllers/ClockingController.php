@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Clocking;
 use Carbon\Carbon;
-use DateTime;
-use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use DateTime;
+use DateTimeZone;
+use IntlDateFormatter;
 
 class ClockingController extends Controller
 {
@@ -49,8 +50,14 @@ class ClockingController extends Controller
         $result = [];
         $cont = 0;
         //Format data
+        setlocale(LC_TIME, 'es_ES', 'Spanish_Spain', 'Spanish');
         foreach($clocks as $key => $day){
-            $result[$cont]['day'] = $key;
+            $auxDate = DateTime::createFromFormat("Y-m-d", $key);
+            $result[$cont]['day'] = IntlDateFormatter::formatObject( 
+                                        $auxDate, 
+                                        'EEEE dd/MM/YYYY', 
+                                        'es' 
+                                    );
             $result[$cont]['total'] = 0;
             foreach($day as $dates){
                 $result[$cont]['dates'][] = array(

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Layout, Menu, Button } from 'antd';
+import { Layout, Menu, Button, Image, Modal } from 'antd';
 import { UserIcon, ClockIcon, ChevronRightIcon, MenuAlt3Icon, HomeIcon, ArrowSmLeftIcon} from '@heroicons/react/outline'; 
 import { useStateContext } from "../../contexts/ContextProvider";
 import axiosClient from "../../axios";
@@ -9,23 +9,28 @@ import './home.css';
 
 const Home = () => {
   const { currentUser, userToken, setCurrentUser, setUserToken } = useStateContext();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const { Header, Sider, Content } = Layout;
   const navigate = useNavigate();
-
-  if (!userToken) {
-    navigate('/login');
-  }
 
   const logout = () => {
     axiosClient({
       url: "/logout",
-      method: "GET"
+      method: "POST"
     })
     .then((response) => {
+      setUserToken(null);
       navigate('/login');
     })
-    .catch((error) => {});
+    .catch((error) => {
+      Modal.error({
+        title: 'Ha ocurrido un error inesperado',
+        content: 'Inténtalo más tarde o contacta con el administrador',
+        okButtonProps: {
+          style: { background: 'green', color: 'white' }
+        },
+      });
+    });
   }
 
   const items = [
@@ -72,18 +77,19 @@ const Home = () => {
         collapsible 
         collapsed={collapsed}
         onCollapse={(c,t) => toggleCollapsed()}
-        breakpoint='lg'>
+        className='ant-side-custom'>
         <Layout 
           style={{backgroundColor: "#001529"}}
           className='h-16 flex justify-center items-center'>
-            <span className='text-white'> Logotipo </span>
+              <Image src="/vite.svg" preview={false}/>
         </Layout>
         <Layout>
-          <Layout className={ collapsed 
+          <Layout  style={{backgroundColor: "#001529"}}
+            className={ collapsed 
             ? 'flex items-center justify-center' 
             : 'flex items-end justify-center'}>           
             <Button
-              style={{border: "none", backgroundColor: 'none', boxShadow: 'none'}}
+              style={{border: "none", backgroundColor: 'none', boxShadow: 'none', color: 'white'}}
               onClick={toggleCollapsed}>
                 {collapsed 
                   ? <ChevronRightIcon className="w-4 h-4" /> 
@@ -102,7 +108,7 @@ const Home = () => {
       </Sider>
       <Layout>
         <Header style={{backgroundColor: "whitesmoke", padding:0}}></Header>
-        <Content className='pr-8 pl-8 m-0'>
+        <Content className='pr-8 pl-8 m-0 ml-20'>
           <Outlet/>
         </Content>
       </Layout>

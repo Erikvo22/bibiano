@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ConfigProvider, Layout, Row, Table, Col, DatePicker, Button } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { ConfigProvider, Layout, Row, Table, Col, DatePicker, Button, Modal } from 'antd';
 import es_ES from 'antd/es/locale/es_ES';
 import { ArrowSmRightIcon, ArrowSmLeftIcon } from '@heroicons/react/outline';
 import { useStateContext } from "../../contexts/ContextProvider";
@@ -7,6 +7,11 @@ import { useNavigate } from 'react-router-dom';
 import axiosClient from "../../axios";
 import moment from 'moment';
 import 'moment/locale/es';
+import dayjs from 'dayjs';
+import 'dayjs/locale/es';
+
+moment.locale('es');
+dayjs.locale('es');
 
 const { RangePicker } = DatePicker;
 const dateFormat = 'DD/MM/YYYY';
@@ -18,10 +23,6 @@ const MyClocks = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const navigate = useNavigate();
-
-  if (!userToken) {
-    navigate('/login');
-  }
 
   useEffect(() => {
     if (userToken) {
@@ -39,7 +40,15 @@ const MyClocks = () => {
           setClocks(response.data.data);
           setUser(response.data.user);
       })
-      .catch((error) => {});
+      .catch((error) => {
+        Modal.error({
+          title: 'Ha ocurrido un error inesperado',
+          content: 'Inténtalo más tarde o contacta con el administrador',
+          okButtonProps: {
+            style: { background: 'green', color: 'white' }
+          },
+        });
+      });
   }
 
   const handleDateChange = (dates, dateString) => {
@@ -61,9 +70,8 @@ const MyClocks = () => {
     {
         title: "Día",
         dataIndex: "day",
-        sorter: (a, b) => a.day.localeCompare(b.day),
         render: (day) => (
-          <p>{moment(day).format('dddd, DD/MM/YYYY')}</p>
+          <p>{day}</p>
         ),
     },
     {
