@@ -1,4 +1,5 @@
-import { Table, Switch, Input, Row, Button, Alert } from "antd";
+import { ConfigProvider, Table, Switch, Input, Row, Button, Alert, Modal } from "antd";
+import es_ES from 'antd/es/locale/es_ES';
 import { useEffect, useState, useRef } from "react";
 import axiosClient from "../../axios";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
@@ -19,10 +20,6 @@ const ListUsers = () => {
     const [data, setData] = useState([]);
     const navigate = useNavigate();
     const location = useLocation();
-
-    if (!userToken) {
-        navigate('/login');
-    }
 
     useEffect(() => {
         location.state?.success && setUserModifyInfo(location.state);
@@ -173,11 +170,17 @@ const ListUsers = () => {
                 });
                 setData(usersSerialized);
             })
-            .catch((error) => {});
+            .catch((error) => {
+                Modal.error({
+                    title: 'Ha ocurrido un error inesperado',
+                    content: 'Inténtalo más tarde o contacta con el administrador',
+                  });
+            });
     }, []);
 
     return (
         <>
+        <ConfigProvider locale={es_ES}>
             {userModifyInfo && userModifyInfo.success && (
                 <Alert
                     message={userModifyInfo.message}
@@ -196,7 +199,8 @@ const ListUsers = () => {
                     Nuevo Usuario
                 </Button>
             </Row>
-            <Table columns={columns} dataSource={data} rowKey="id" />
+            <Table columns={columns} dataSource={data} rowKey="id" scroll={{ x: 500 }}/>
+        </ConfigProvider>
         </>
     );
 };

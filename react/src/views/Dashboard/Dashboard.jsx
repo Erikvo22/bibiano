@@ -24,6 +24,7 @@ const App = () => {
   }
 
   useEffect(() => {
+    console.log(userToken);
     if (userToken) {
       getClocks();
     }
@@ -72,7 +73,12 @@ const App = () => {
           setClocks(response.data.data);
           setUserName(response.data.username);
       })
-      .catch((error) => {});
+      .catch((error) => {
+        Modal.error({
+          title: 'Ha ocurrido un error inesperado',
+          content: 'Inténtalo más tarde o contacta con el administrador',
+        });
+      });
   }
 
   const toggleWork = () => {
@@ -107,7 +113,12 @@ const App = () => {
       .then((response) => {
         getClocks();
       })
-      .catch((error) => {});
+      .catch((error) => {
+        Modal.error({
+          title: 'Ha ocurrido un error inesperado',
+          content: 'Inténtalo más tarde o contacta con el administrador',
+        });
+      });
   }
 
   return (
