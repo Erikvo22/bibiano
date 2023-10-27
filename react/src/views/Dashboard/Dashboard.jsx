@@ -111,7 +111,7 @@ const App = () => {
   }
 
   return (
-    <Layout className='h-screen'>
+    <Layout className='min-h-screen'>
       <Row>
         <h1 className="pb-4 text-2xl">¡Hola <b>{userName}</b>!</h1>
       </Row>

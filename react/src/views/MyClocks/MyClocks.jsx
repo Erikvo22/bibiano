@@ -1,22 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Layout, Input, Typography, Row, Table, Col } from 'antd';
-import { SearchOutlined } from "@ant-design/icons";
+import { ConfigProvider, Layout, Row, Table, Col, DatePicker, Button } from 'antd';
+import es_ES from 'antd/es/locale/es_ES';
 import { ArrowSmRightIcon, ArrowSmLeftIcon } from '@heroicons/react/outline';
 import { useStateContext } from "../../contexts/ContextProvider";
 import { useNavigate } from 'react-router-dom';
 import axiosClient from "../../axios";
 import moment from 'moment';
+import 'moment/locale/es';
 
-const { Text } = Typography;
-const { Title } = Typography;
+const { RangePicker } = DatePicker;
+const dateFormat = 'DD/MM/YYYY';
 
 const MyClocks = () => {
   const { currentUser, userToken, setCurrentUser, setUserToken } = useStateContext();
-  const searchInput = useRef(null);
-  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState("");
   const [user, setUser] = useState('');
   const [clocks, setClocks] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const navigate = useNavigate();
 
   if (!userToken) {
@@ -32,7 +32,8 @@ const MyClocks = () => {
   const getClocks = () => {
     axiosClient({
       url: "/clocks/all",
-      method: "GET"
+      method: "POST",
+      data: {'startDate': startDate, 'endDate': endDate}
     })
       .then((response) => {
           setClocks(response.data.data);
@@ -41,55 +42,20 @@ const MyClocks = () => {
       .catch((error) => {});
   }
 
-  const handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
+  const handleDateChange = (dates, dateString) => {
+   if(dateString.length == 2)
+   {
+    setStartDate(dateString[0]);
+    setEndDate(dateString[1]);
+   }else{
+    setStartDate(null);
+    setEndDate(null);
+   }
   };
 
-  const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => (
-        <Input
-            refix={<SearchOutlined />}
-            ref={searchInput}
-            placeholder={"Buscar por ..."}
-            value={selectedKeys[0]}
-            onChange={(e) =>
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-            }
-            onPressEnter={() =>
-                handleSearch(selectedKeys, confirm, dataIndex)
-            }
-            style={{ border: 0 }}
-        />
-    ),
-    filterIcon: (filtered) => (
-        <SearchOutlined
-            style={{ color: filtered ? "#1677ff" : undefined }}
-        />
-    ),
-    onFilter: (value, record) =>
-        record[dataIndex]
-            .toString()
-            .toLowerCase()
-            .includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-        if (visible) {
-            setTimeout(() => searchInput.current?.select(), 100);
-        }
-    },
-    render: (text) =>
-        searchedColumn === dataIndex ? (
-            <Highlighter
-                highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-                searchWords={[searchText]}
-                autoEscape
-                textToHighlight={text ? text.toString() : ""}
-            />
-        ) : (
-            text
-        ),
-  });
+  const handleSearch = () => {
+    getClocks();
+  };
 
   const columns = [
     {
@@ -131,16 +97,32 @@ const MyClocks = () => {
   ];
 
   return (
-    <Layout className='h-screen'>
+    <ConfigProvider locale={es_ES}>
+    <Layout className='min-h-screen'>
         <Row>
           <h1 className="pb-4 text-2xl">Mis fichajes</h1>
         </Row>
+        <Row justify="left" className='mt-4' gutter={24}>
+          <Col span={24} className='inline-flex'>
+            <RangePicker format={dateFormat} onChange={handleDateChange} />
+            <Button className="button-antd-custom ml-2"
+                    type="primary"
+                    onClick={handleSearch}>
+              Buscar
+            </Button>
+          </Col>
+        </Row>
         <Row justify="center" className='mt-4' gutter={24}>
           <Col span={24}>
-            <Table columns={columns} dataSource={clocks} rowKey="id" />
+            <Table pagination={{ pageSize: 7}} 
+                   columns={columns} 
+                   dataSource={clocks} 
+                   scroll={{ x: 500 }}
+                   rowKey="id" />
           </Col>
         </Row>
     </Layout>
+    </ConfigProvider>
   );
 };
 

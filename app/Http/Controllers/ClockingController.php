@@ -27,11 +27,20 @@ class ClockingController extends Controller
         ]);
     }
 
-    public function getClocksByUser() : JsonResponse
+    public function getClocksByUser(Request $request) : JsonResponse
     {
+        $dataRequest = $request->all();
         $user = Auth::user();
-        $clocks = Clocking::where('user_id', $user['id'])
-                ->orderBy('date', 'DESC')
+        $clocks = Clocking::where('user_id', $user['id']);
+        
+        if($dataRequest['startDate'] && $dataRequest['endDate'])
+        {
+            $startDate =  Carbon::createFromFormat('d/m/Y',$dataRequest['startDate'])->format('Y-m-d');
+            $endDate =  Carbon::createFromFormat('d/m/Y', $dataRequest['endDate'])->format('Y-m-d');    
+            $clocks = $clocks->whereBetween('date', [$startDate, $endDate]);
+        }
+        
+        $clocks = $clocks->orderBy('date', 'DESC')
                 ->get()
                 ->groupBy(function($d) {
                     return Carbon::parse($d->date)->format('Y-m-d');
