@@ -48,6 +48,9 @@ export default function Login() {
             Modal.error({
               title: 'Ha ocurrido un error inesperado',
               content: 'Inténtalo más tarde o contacta con el administrador',
+              okButtonProps: {
+                style: { background: 'green', color: 'white' }
+              },
             });
           }
       })
