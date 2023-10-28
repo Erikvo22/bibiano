@@ -1,4 +1,14 @@
-import { Table, Switch, Input, Row, Button, Alert } from "antd";
+import {
+    ConfigProvider,
+    Table,
+    Switch,
+    Input,
+    Row,
+    Button,
+    Alert,
+    Modal,
+} from "antd";
+import es_ES from "antd/es/locale/es_ES";
 import { useEffect, useState, useRef } from "react";
 import axiosClient from "../../axios";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
@@ -7,6 +17,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useStateContext } from "../../contexts/ContextProvider";
 
 const onAvailabilityChange = (record, checked) => {
     axiosClient({
@@ -28,6 +39,8 @@ const onAvailabilityChange = (record, checked) => {
 };
 
 const ListUsers = () => {
+    const { currentUser, userToken, setCurrentUser, setUserToken } =
+        useStateContext();
     const searchInput = useRef(null);
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
@@ -195,7 +208,7 @@ const ListUsers = () => {
     ];
 
     return (
-        <>
+        <ConfigProvider locale={es_ES}>
             {data.length > 0 && (
                 <>
                     <ToastContainer />
@@ -223,7 +236,7 @@ const ListUsers = () => {
                     />
                 </>
             )}
-        </>
+        </ConfigProvider>
     );
 };
 

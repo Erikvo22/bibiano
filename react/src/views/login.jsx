@@ -4,6 +4,7 @@ import { useState } from 'react';
 import axiosClient from '../axios';
 import { useStateContext } from "../contexts/ContextProvider";
 import { useNavigate, Navigate } from 'react-router-dom';
+import { Image, Modal } from 'antd';
 
 export default function Login() {
 
@@ -43,6 +44,14 @@ export default function Login() {
               []
             );
             setError({__html: finalErrors.join('<br>')});
+          }else{
+            Modal.error({
+              title: 'Ha ocurrido un error inesperado',
+              content: 'Inténtalo más tarde o contacta con el administrador',
+              okButtonProps: {
+                style: { background: 'green', color: 'white' }
+              },
+            });
           }
       })
   }
@@ -54,6 +63,9 @@ export default function Login() {
         <h2 className="text-3xl font-bold mb-6 text-center text-white">
           <span className="bg-gradient-to-r text-transparent from-green-800 to-green-400 bg-clip-text">
             Comercial Bibiano
+          </span>
+          <span className='ml-2'>
+            <Image src="/vite.svg" preview={false}/>
           </span>
         </h2>
         
