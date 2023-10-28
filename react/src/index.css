@@ -3,7 +3,11 @@
 @tailwind utilities;
 
 @media(max-width: 576px) { 
-    .ant-picker-panels { 
-      flex-direction: column;
-    } 
-  }
+  .ant-picker-panels { 
+    flex-direction: column;
+  } 
+}
+
+.green-app {
+  background-color: #003A00;
+}
