@@ -79,15 +79,13 @@ const Home = () => {
         onCollapse={(c,t) => toggleCollapsed()}
         className='ant-side-custom'>
         <Layout 
-          style={{backgroundColor: "#001529"}}
-          className='h-16 flex justify-center items-center'>
+          className='h-16 flex justify-center items-center green-app'>
               <Image src="/vite.svg" preview={false}/>
         </Layout>
         <Layout>
-          <Layout  style={{backgroundColor: "#001529"}}
-            className={ collapsed 
-            ? 'flex items-center justify-center' 
-            : 'flex items-end justify-center'}>           
+          <Layout className={ collapsed 
+            ? 'flex items-center justify-center green-app' 
+            : 'flex items-end justify-center green-app'}>           
             <Button
               style={{border: "none", backgroundColor: 'none', boxShadow: 'none', color: 'white'}}
               onClick={toggleCollapsed}>
