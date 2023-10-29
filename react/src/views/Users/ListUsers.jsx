@@ -1,13 +1,4 @@
-import {
-    ConfigProvider,
-    Table,
-    Switch,
-    Input,
-    Row,
-    Button,
-    Alert,
-    Modal,
-} from "antd";
+import { ConfigProvider, Table, Switch, Input, Row, Button, Modal } from "antd";
 import es_ES from "antd/es/locale/es_ES";
 import { useEffect, useState, useRef } from "react";
 import axiosClient from "../../axios";
@@ -39,14 +30,50 @@ const onAvailabilityChange = (record, checked) => {
 };
 
 const ListUsers = () => {
-    const { currentUser, userToken, setCurrentUser, setUserToken } =
-        useStateContext();
+    const { currentUser } = useStateContext();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleOk = () => {
+        const userId = userSelected.id;
+        setUserPassword(resetUserPassword, userId);
+    };
+    const handleCancel = () => {
+        setResetUserPassword("");
+        setIsModalOpen(false);
+    };
+
+    const [userSelected, setUserSelected] = useState(null);
+    const [resetUserPassword, setResetUserPassword] = useState("");
     const searchInput = useRef(null);
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
     const [data, setData] = useState([]);
     const navigate = useNavigate();
     const location = useLocation();
+
+    const setUserPassword = (newPassword, userId) => {
+        axiosClient({
+            url: "/user/reset-password",
+            method: "PUT",
+            data: {
+                id: userId,
+                newPassword: newPassword,
+            },
+        })
+            .then((response) => {
+                toast.success("Se ha actualizado la contraseña correctamente");
+            })
+            .catch((error) => {
+                toast.error(error.meesage);
+            })
+            .finally(() => {
+                setIsModalOpen(false);
+                setResetUserPassword("");
+            });
+    };
 
     useEffect(() => {
         axiosClient({
@@ -65,7 +92,7 @@ const ListUsers = () => {
                 });
                 setData(usersSerialized);
                 if (location.state?.success) {
-                    toast.success("Nuevo usuario creado.");
+                    toast.success(location.state.message);
                 }
             })
             .catch((error) => {
@@ -132,6 +159,11 @@ const ListUsers = () => {
     });
 
     const columns = [
+        {
+            title: "Id",
+            dataIndex: "id",
+            className: "hidden",
+        },
         {
             title: "Nombre",
             dataIndex: "name",
@@ -205,10 +237,49 @@ const ListUsers = () => {
                 />
             ),
         },
+        {
+            title: "Acciones",
+            key: "icon",
+            align: "center",
+            render: (record) => (
+                <img
+                    src="/icon/password-icon.png"
+                    style={{ width: "20px", height: "20px", margin: "auto" }}
+                    onClick={() => {
+                        showModal();
+                        setUserSelected(record);
+                    }}
+                />
+            ),
+        },
     ];
 
     return (
         <ConfigProvider locale={es_ES}>
+            <Modal
+                title="Resetear contraseña"
+                open={isModalOpen}
+                onOk={handleOk}
+                onCancel={handleCancel}
+                okText="Resetear contraseña"
+                cancelText="Cancelar"
+                okButtonProps={{
+                    style: {
+                        backgroundColor: "#1677ff",
+                        color: "#fff",
+                        boxShadow: "0 2px 0 rgba(5,145,255,.1)",
+                    },
+                }}
+            >
+                <Input
+                    placeholder={"Nueva contraseña"}
+                    className="input-antd-custom"
+                    onChange={(e) => {
+                        setResetUserPassword(e.target.value);
+                    }}
+                    value={resetUserPassword}
+                />
+            </Modal>
             {data.length > 0 && (
                 <>
                     <ToastContainer />

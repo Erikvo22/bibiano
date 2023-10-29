@@ -42,7 +42,12 @@ const FormUser = () => {
         })
             .then((response) => {
                 if (response.data.success) {
-                    navigate("/users", { state: { success: true } });
+                    navigate("/users", {
+                        state: {
+                            success: true,
+                            message: response.data.message,
+                        },
+                    });
                 } else {
                     let message = "";
                     const errors = response.data.errors;
@@ -168,37 +173,40 @@ const FormUser = () => {
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Row>
-                        <Col span={24}>
-                            <Form.Item
-                                label="Contraseña"
-                                name="password"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "La contraseña es requerida",
-                                    },
-                                    {
-                                        min: 6,
-                                        message:
-                                            "La contraseña debe tener al menos 8 caracteres",
-                                    },
-                                ]}
-                            >
-                                <Input.Password
-                                    placeholder="Introduce la contraseña"
-                                    iconRender={(visible) =>
-                                        visible ? (
-                                            <EyeTwoTone />
-                                        ) : (
-                                            <EyeInvisibleOutlined />
-                                        )
-                                    }
-                                    maxLength={128}
-                                />
-                            </Form.Item>
-                        </Col>
-                    </Row>
+                    {location.pathname.includes("/nuevo") && (
+                        <Row>
+                            <Col span={24}>
+                                <Form.Item
+                                    label="Contraseña"
+                                    name="password"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message:
+                                                "La contraseña es requerida",
+                                        },
+                                        {
+                                            min: 6,
+                                            message:
+                                                "La contraseña debe tener al menos 8 caracteres",
+                                        },
+                                    ]}
+                                >
+                                    <Input.Password
+                                        placeholder="Introduce la contraseña"
+                                        iconRender={(visible) =>
+                                            visible ? (
+                                                <EyeTwoTone />
+                                            ) : (
+                                                <EyeInvisibleOutlined />
+                                            )
+                                        }
+                                        maxLength={128}
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    )}
                     <Row>
                         <Col span={24}>
                             <Form.Item

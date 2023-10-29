@@ -20,10 +20,12 @@ const router = createBrowserRouter([
                 element: <Dashboard />,
             },
             {
-                path: "/users",
-                element: <ListUsers />,
                 path: "/my-clocks",
                 element: <MyClocks />,
+            },
+            {
+                path: "/users",
+                element: <ListUsers />,
             },
             {
                 path: "/user/:user_id",
