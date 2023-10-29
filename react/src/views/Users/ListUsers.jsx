@@ -1,32 +1,111 @@
-import { ConfigProvider, Table, Switch, Input, Row, Button, Alert, Modal } from "antd";
-import es_ES from 'antd/es/locale/es_ES';
+import { ConfigProvider, Table, Switch, Input, Row, Button, Modal } from "antd";
+import es_ES from "antd/es/locale/es_ES";
 import { useEffect, useState, useRef } from "react";
 import axiosClient from "../../axios";
 import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import { useNavigate, useLocation } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useStateContext } from "../../contexts/ContextProvider";
 
-const onAvailabilityChange = (record) => {
-    record.activo = !record.activo;
+const onAvailabilityChange = (record, checked) => {
+    axiosClient({
+        url: `/user/active`,
+        method: "POST",
+        data: {
+            active: checked,
+            id: record.id,
+        },
+    })
+        .then((response) => {
+            record.active = checked;
+            toast.success(response.data.message);
+        })
+        .catch((error) => {
+            record.active = !checked;
+            toast.error(error.data.message);
+        });
 };
 
 const ListUsers = () => {
-    const { currentUser, userToken, setCurrentUser, setUserToken } = useStateContext();
+    const { currentUser } = useStateContext();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleOk = () => {
+        const userId = userSelected.id;
+        setUserPassword(resetUserPassword, userId);
+    };
+    const handleCancel = () => {
+        setResetUserPassword("");
+        setIsModalOpen(false);
+    };
+
+    const [userSelected, setUserSelected] = useState(null);
+    const [resetUserPassword, setResetUserPassword] = useState("");
     const searchInput = useRef(null);
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
-    const [userModifyInfo, setUserModifyInfo] = useState();
     const [data, setData] = useState([]);
     const navigate = useNavigate();
     const location = useLocation();
 
+    const setUserPassword = (newPassword, userId) => {
+        axiosClient({
+            url: "/user/reset-password",
+            method: "PUT",
+            data: {
+                id: userId,
+                newPassword: newPassword,
+            },
+        })
+            .then((response) => {
+                toast.success("Se ha actualizado la contraseña correctamente");
+            })
+            .catch((error) => {
+                toast.error(error.meesage);
+            })
+            .finally(() => {
+                setIsModalOpen(false);
+                setResetUserPassword("");
+            });
+    };
+
     useEffect(() => {
-        location.state?.success && setUserModifyInfo(location.state);
-    }, [location]);
+        axiosClient({
+            url: "/users/list",
+        })
+            .then((response) => {
+                const usersSerialized = response.data.data.map((user) => {
+                    user.active = user.active === 1 ? true : false;
+                    user.mobile = user.mobile === null ? "" : user.mobile;
+                    user.role_description =
+                        user.role === "ADMIN" ? "Admin" : "Empleado";
+                    return {
+                        ...user,
+                        surname: user.firstname + " " + user.secondname,
+                    };
+                });
+                setData(usersSerialized);
+                if (location.state?.success) {
+                    toast.success(location.state.message);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
 
     const handleClick = () => {
         navigate("/user/nuevo");
+    };
+
+    const handleDoubleClick = (record) => {
+        navigate(`/user/${record.id}`, { state: { user: record } });
     };
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -80,6 +159,11 @@ const ListUsers = () => {
     });
 
     const columns = [
+        {
+            title: "Id",
+            dataIndex: "id",
+            className: "hidden",
+        },
         {
             title: "Nombre",
             dataIndex: "name",
@@ -147,64 +231,83 @@ const ListUsers = () => {
             render: (record) => (
                 <Switch
                     defaultChecked={record.active}
-                    onClick={() => onAvailabilityChange(record)}
+                    onChange={(checked) =>
+                        onAvailabilityChange(record, checked)
+                    }
+                />
+            ),
+        },
+        {
+            title: "Acciones",
+            key: "icon",
+            align: "center",
+            render: (record) => (
+                <img
+                    src="/icon/password-icon.png"
+                    style={{ width: "20px", height: "20px", margin: "auto" }}
+                    onClick={() => {
+                        showModal();
+                        setUserSelected(record);
+                    }}
                 />
             ),
         },
     ];
 
-    useEffect(() => {
-        axiosClient({
-            url: "/users/list",
-        })
-            .then((response) => {
-                const usersSerialized = response.data.data.map((user) => {
-                    user.active = user.active === 1 ? true : false;
-                    user.mobile = user.mobile === null ? "" : user.mobile;
-                    user.role_description =
-                        user.role === "ADMIN" ? "Admin" : "Empleado";
-                    return {
-                        ...user,
-                        surname: user.firstname + " " + user.secondname,
-                    };
-                });
-                setData(usersSerialized);
-            })
-            .catch((error) => {
-                Modal.error({
-                    title: 'Ha ocurrido un error inesperado',
-                    content: 'Inténtalo más tarde o contacta con el administrador',
-                    okButtonProps: {
-                        style: { background: 'green', color: 'white' }
-                      },
-                  });
-            });
-    }, []);
-
     return (
-        <>
         <ConfigProvider locale={es_ES}>
-            {userModifyInfo && userModifyInfo.success && (
-                <Alert
-                    message={userModifyInfo.message}
-                    type="success"
-                    closable
+            <Modal
+                title="Resetear contraseña"
+                open={isModalOpen}
+                onOk={handleOk}
+                onCancel={handleCancel}
+                okText="Resetear contraseña"
+                cancelText="Cancelar"
+                okButtonProps={{
+                    style: {
+                        backgroundColor: "#1677ff",
+                        color: "#fff",
+                        boxShadow: "0 2px 0 rgba(5,145,255,.1)",
+                    },
+                }}
+            >
+                <Input
+                    placeholder={"Nueva contraseña"}
+                    className="input-antd-custom"
+                    onChange={(e) => {
+                        setResetUserPassword(e.target.value);
+                    }}
+                    value={resetUserPassword}
                 />
+            </Modal>
+            {data.length > 0 && (
+                <>
+                    <ToastContainer />
+                    <h1 className="pb-4 text-2xl">Listado de usuarios</h1>
+                    <Row className="mb-4" justify="end">
+                        <Button
+                            icon={<PlusOutlined />}
+                            className="button-antd-custom"
+                            type="primary"
+                            onClick={handleClick}
+                        >
+                            Nuevo Usuario
+                        </Button>
+                    </Row>
+                    <Table
+                        columns={columns}
+                        dataSource={data}
+                        onDoubleClick
+                        onRow={(record) => ({
+                            onDoubleClick: () => {
+                                handleDoubleClick(record);
+                            },
+                        })}
+                        rowKey="id"
+                    />
+                </>
             )}
-            <h1 className="pb-4 text-2xl">Listado de usuarios</h1>
-            <Row className="mb-4" justify="end">
-                <Button
-                    icon={<PlusOutlined />}
-                    className="button-antd-custom"
-                    type="primary"
-                    onClick={handleClick}
-                >
-                    Nuevo Usuario
-                </Button>
-            </Row>
-            <Table columns={columns} dataSource={data} rowKey="id" scroll={{ x: 500 }}/>
         </ConfigProvider>
-        </>
     );
 };
 

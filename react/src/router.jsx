@@ -8,31 +8,31 @@ import MyClocks from "./views/MyClocks/MyClocks.jsx";
 
 const router = createBrowserRouter([
     {
-        path: '/login',
-        element: <Login />
+        path: "/login",
+        element: <Login />,
     },
     {
-        path: '/',
+        path: "/",
         element: <Home />,
         children: [
             {
-                path: '/dashboard',
-                element: <Dashboard />
+                path: "/dashboard",
+                element: <Dashboard />,
             },
             {
-                path: '/my-clocks',
-                element: <MyClocks /> 
+                path: "/my-clocks",
+                element: <MyClocks />,
             },
             {
-                path: '/users',
-                element: <ListUsers />
+                path: "/users",
+                element: <ListUsers />,
             },
             {
-                path: '/user/:user_id',
-                element: <FormUser />
+                path: "/user/:user_id",
+                element: <FormUser />,
             },
-        ]
+        ],
     },
-])
+]);
 
 export default router;

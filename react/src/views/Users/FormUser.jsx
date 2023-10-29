@@ -1,24 +1,50 @@
-import React, { useState } from "react";
+import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Row, Col, Form, Input, Select, Button, Alert } from "antd";
+import { useForm } from "antd/lib/form/Form";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+
+import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+
 import axiosClient from "../../axios";
+
 import "./User.css";
 
-const FormUser = ({ user }) => {
+const FormUser = () => {
     const navigate = useNavigate();
-    const [userCreatedError, setUserCreatedError] = useState({});
-    const onFinish = (values) => {
+    const [form] = useForm();
+    const location = useLocation();
+
+    if (location.state?.user) {
+        form.setFieldsValue({
+            ...location.state.user,
+        });
+    } else {
+        form.setFieldsValue({
+            name: "",
+            firstname: "",
+            secondname: "",
+            dni: "",
+            mobile: "",
+            email: "",
+            password: "",
+            role: "USER",
+        });
+    }
+
+    const onFinish = (value) => {
+        const esNuevoUsuario = location.pathname.includes("/nuevo");
         axiosClient({
-            url: "/user",
-            method: "POST",
-            data: values,
+            url: esNuevoUsuario ? "/user" : `/user/${value.id}`,
+            method: esNuevoUsuario ? "POST" : "PUT",
+            data: value,
         })
             .then((response) => {
                 if (response.data.success) {
                     navigate("/users", {
                         state: {
-                            success: response.data.success,
+                            success: true,
                             message: response.data.message,
                         },
                     });
@@ -28,61 +54,25 @@ const FormUser = ({ user }) => {
                     for (let key in errors) {
                         message += `${key}: ${errors[key]} `;
                     }
-                    setUserCreatedError({
-                        success: false,
-                        message: message,
-                    });
+                    toast.error(message);
                 }
             })
             .catch((error) => {
-                setUserCreatedError({
-                    success: false,
-                    message: error,
-                });
+                toast.error(error);
             });
     };
-
-    const handleCancel = () => {
-        navigate("/users", { state: { success: false } });
-    };
-
-    return (
-        <>
-            {userCreatedError.success !== undefined &&
-                !userCreatedError.success && (
-                    <Alert message={userCreatedError.message} type="error" />
-                )}
-            <Template onFinish={onFinish} onCancel={handleCancel} user={user} />
-        </>
-    );
-};
-
-const Template = ({ onFinish, onCancel, user }) => {
-    const [form] = Form.useForm();
-
-    if (user !== undefined) {
-        form.setFieldsValue({
-            name: user?.name,
-            firstname: user?.firstname,
-            secondname: user?.secondname,
-            dni: user?.dni,
-            mobile: user?.mobile,
-            email: user?.email,
-            password: user?.password,
-            role: user?.role,
-        });
-    }
 
     return (
         <>
             <h1 className="pb-4 text-2xl">Nuevo Usuario</h1>
             <div>
-                <Form
-                    form={form}
-                    layout="vertical"
-                    onFinish={onFinish}
-                    initialValues={user}
-                >
+                <ToastContainer />
+                <Form form={form} layout="vertical" onFinish={onFinish}>
+                    <Row>
+                        <Form.Item name="id" noStyle>
+                            <Input type="hidden" />
+                        </Form.Item>
+                    </Row>
                     <Row>
                         <Col span={24}>
                             <Form.Item
@@ -98,7 +88,6 @@ const Template = ({ onFinish, onCancel, user }) => {
                                 <Input
                                     className="input-antd-custom"
                                     placeholder="Nombre"
-                                    pattern="[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+"
                                     maxLength={50}
                                 />
                             </Form.Item>
@@ -110,7 +99,6 @@ const Template = ({ onFinish, onCancel, user }) => {
                                 <Input
                                     className="input-antd-custom"
                                     placeholder="Primer Apellido"
-                                    pattern="[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+"
                                     maxLength={50}
                                 />
                             </Form.Item>
@@ -123,7 +111,6 @@ const Template = ({ onFinish, onCancel, user }) => {
                                 <Input
                                     className="input-antd-custom"
                                     placeholder="Segundo Apellido"
-                                    pattern="[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+"
                                     maxLength={50}
                                 />
                             </Form.Item>
@@ -186,37 +173,40 @@ const Template = ({ onFinish, onCancel, user }) => {
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Row>
-                        <Col span={24}>
-                            <Form.Item
-                                label="Contraseña"
-                                name="password"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "La contraseña es requerida",
-                                    },
-                                    {
-                                        min: 6,
-                                        message:
-                                            "La contraseña debe tener al menos 8 caracteres",
-                                    },
-                                ]}
-                            >
-                                <Input.Password
-                                    placeholder="Introduce la contraseña"
-                                    iconRender={(visible) =>
-                                        visible ? (
-                                            <EyeTwoTone />
-                                        ) : (
-                                            <EyeInvisibleOutlined />
-                                        )
-                                    }
-                                    maxLength={128}
-                                />
-                            </Form.Item>
-                        </Col>
-                    </Row>
+                    {location.pathname.includes("/nuevo") && (
+                        <Row>
+                            <Col span={24}>
+                                <Form.Item
+                                    label="Contraseña"
+                                    name="password"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message:
+                                                "La contraseña es requerida",
+                                        },
+                                        {
+                                            min: 6,
+                                            message:
+                                                "La contraseña debe tener al menos 8 caracteres",
+                                        },
+                                    ]}
+                                >
+                                    <Input.Password
+                                        placeholder="Introduce la contraseña"
+                                        iconRender={(visible) =>
+                                            visible ? (
+                                                <EyeTwoTone />
+                                            ) : (
+                                                <EyeInvisibleOutlined />
+                                            )
+                                        }
+                                        maxLength={128}
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    )}
                     <Row>
                         <Col span={24}>
                             <Form.Item
@@ -256,7 +246,9 @@ const Template = ({ onFinish, onCancel, user }) => {
                             <Button
                                 className="full-width-button"
                                 type="default"
-                                onClick={onCancel}
+                                onClick={() => {
+                                    navigate("/users");
+                                }}
                             >
                                 Cancelar
                             </Button>
