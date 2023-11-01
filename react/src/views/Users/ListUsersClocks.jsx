@@ -1,13 +1,39 @@
-import React from "react";
-import { Table } from "antd";
-
+import React, { useState } from "react";
+import { Table, Row, Col, Button } from "antd";
+import { DocumentTextIcon, AdjustmentsIcon } from "@heroicons/react/outline";
+import axiosClient from "../../axios";
 const ListUsersClocks = () => {
-    [filters, setFilters] = useState({
+    const [filters, setFilters] = useState({
         page: 0,
         limit: 10,
         filters: {},
     });
 
+    const downloadHistoryClocks = () => {
+        axiosClient({
+            url: "/clocks/history",
+            method: "GET",
+            responseType: "blob",
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Error al descargar el informe");
+                }
+                return response.blob();
+            })
+            .then((blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "Controlhorario.xlsx";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+    };
     const data = [
         {
             id: 1,
@@ -25,7 +51,6 @@ const ListUsersClocks = () => {
             exitTime: "18:00",
             workedTime: "09:00",
         },
-        // ...
     ];
 
     const columns = [
@@ -56,10 +81,36 @@ const ListUsersClocks = () => {
         },
     ];
     return (
-        <div>
-            <h1>Listado de fichaje de usuarios</h1>
+        <>
+            <h1 className="pb-4 text-2xl">Historial de fichajes</h1>
+            <Row className="mb-2">
+                <Col span={12} className="flex items-center justify-start">
+                    <Button
+                        onClick={() => {}}
+                        icon={
+                            <AdjustmentsIcon
+                                className="w-5 h-5"
+                                style={{ color: "green" }}
+                            />
+                        }
+                        className="border-0 bg-transparent"
+                    ></Button>
+                </Col>
+                <Col span={12} className="flex items-center justify-end">
+                    <Button
+                        onClick={downloadHistoryClocks}
+                        icon={
+                            <DocumentTextIcon
+                                className="w-5 h-5"
+                                style={{ color: "green" }}
+                            />
+                        }
+                        className="border-0 bg-transparent"
+                    ></Button>
+                </Col>
+            </Row>
             <Table columns={columns} dataSource={data} />
-        </div>
+        </>
     );
 };
 

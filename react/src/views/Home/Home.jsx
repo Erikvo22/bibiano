@@ -8,6 +8,7 @@ import {
     MenuAlt3Icon,
     HomeIcon,
     ArrowSmLeftIcon,
+    DocumentIcon,
 } from "@heroicons/react/outline";
 import { useStateContext } from "../../contexts/ContextProvider";
 import axiosClient from "../../axios";
@@ -57,13 +58,19 @@ const Home = () => {
         },
         {
             key: "3",
+            label: "Informes",
+            target: "/history-clocks",
+            icon: <DocumentIcon className="w-5 h-5" />,
+        },
+        {
+            key: "4",
             label: "Usuarios",
             target: "/users",
             icon: <UserIcon className="w-5 h-5" />,
             hidden: currentUser?.role === "USER",
         },
         {
-            key: "4",
+            key: "5",
             label: "Cerrar sesión",
             onClick: logout,
             icon: <ArrowSmLeftIcon className="w-5 h-5" />,
