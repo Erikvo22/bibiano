@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Layout, Menu, Button, Image, Modal } from 'antd';
 import { UserIcon, ClockIcon, ChevronRightIcon, MenuAlt3Icon, HomeIcon, ArrowSmLeftIcon} from '@heroicons/react/outline'; 
@@ -12,6 +12,25 @@ const Home = () => {
   const [collapsed, setCollapsed] = useState(true);
   const { Header, Sider, Content } = Layout;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    axiosClient({
+      url: "/user/getInfoUser",
+      method: "GET"
+    })
+    .then((response) => {
+      setCurrentUser(response.data.data);
+    })
+    .catch((error) => {
+      Modal.error({
+        title: 'Ha ocurrido un error inesperado',
+        content: 'Inténtalo más tarde o contacta con el administrador',
+        okButtonProps: {
+          style: { background: 'green', color: 'white' }
+        },
+      });
+    });
+  }, []);
 
   const logout = () => {
     axiosClient({
@@ -33,7 +52,7 @@ const Home = () => {
     });
   }
 
-  const items = [
+  const itemsAdmin = [
     {
       key: '1',
       label: 'Inicio',
@@ -60,7 +79,29 @@ const Home = () => {
     }
   ];
 
+  const itemsUser = [
+    {
+      key: '1',
+      label: 'Inicio',
+      target: '/dashboard',
+      icon: <HomeIcon className="w-5 h-5" />,
+    },
+    {
+      key: '2',
+      label: 'Mis fichajes',
+      target: '/my-clocks',
+      icon: <ClockIcon className="w-5 h-5" />,
+    },
+    {
+      key: '3',
+      label: 'Cerrar sesión',
+      onClick: logout,
+      icon: <ArrowSmLeftIcon className="w-5 h-5" />,
+    }
+  ];
+
   const handleMenuClick = ({ key }) => {
+    const items = currentUser.role == 'ADMIN' ? itemsAdmin : itemsUser;
     const itemClicked = items.find((item) => item.key === key);
     itemClicked?.target && navigate(itemClicked.target);
   };
@@ -78,9 +119,8 @@ const Home = () => {
         collapsed={collapsed}
         onCollapse={(c,t) => toggleCollapsed()}
         className='ant-side-custom'>
-        <Layout 
-          className='h-16 flex justify-center items-center green-app'>
-              <Image src="/vite.svg" preview={false}/>
+        <Layout className='h-16 flex justify-center items-center green-app'>
+              <Image src="/logo-simple.png" preview={false} style={{width: '6em', height: '4em'}}/>
         </Layout>
         <Layout>
           <Layout className={ collapsed 
@@ -98,7 +138,7 @@ const Home = () => {
             theme="dark"
             mode="inline"
             defaultSelectedKeys={['0']}
-            items={items}
+            items={currentUser.role == 'ADMIN' ? itemsAdmin : itemsUser}
             onClick={handleMenuClick}
             inlineCollapsed={collapsed}
           />

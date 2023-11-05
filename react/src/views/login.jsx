@@ -60,18 +60,13 @@ export default function Login() {
     <>
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-green-50 to-green-25">
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md">
-        <h2 className="text-3xl font-bold mb-6 text-center text-white">
-          <span className="bg-gradient-to-r text-transparent from-green-800 to-green-400 bg-clip-text">
-            Comercial Bibiano
+          <span>
+            <Image src="/logo.svg" preview={false}/>
           </span>
-          <span className='ml-2'>
-            <Image src="/vite.svg" preview={false}/>
-          </span>
-        </h2>
         
         {error.__html && (
           <div
-            className="bg-red-500 rounded py-2 px-3 text-white"
+            className="bg-red-500 rounded py-2 px-3 mt-2 text-white"
             dangerouslySetInnerHTML={error}
           ></div>
         )}
