@@ -6,10 +6,21 @@ use App\Models\User;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+
+    public function getInfoUser()
+    {
+        $user = Auth::user();
+        $user = User::find($user->id); 
+        return new JsonResponse([
+            'data' => $user,
+        ]);
+    }
+    
     public function store(Request $request)
     {       
         $validator = Validator::make($request->all(), [
