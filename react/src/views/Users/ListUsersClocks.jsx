@@ -3,6 +3,7 @@ import { Table, Row, Col, Button, DatePicker, Select } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
 import { DocumentTextIcon, AdjustmentsIcon } from "@heroicons/react/outline";
 import axiosClient from "../../axios";
+import moment from "moment";
 const ListUsersClocks = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [users, setUsers] = useState([
@@ -213,7 +214,7 @@ const ListUsersClocks = () => {
                     >
                         <label className="mb-1">Buscador entre fechas:</label>
                         <RangePicker
-                            showNow
+                            showNow={true}
                             format={dateFormat}
                             onChange={handleDateChange}
                             style={{ width: "100%" }}
