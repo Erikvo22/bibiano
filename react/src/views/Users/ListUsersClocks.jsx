@@ -71,8 +71,8 @@ const ListUsersClocks = () => {
                         const entries = userEntries[date].hour;
 
                         entries.forEach((entry) => {
-                            const entryTime = entry.E.split(" ")[1];
-                            const exitTime = entry.S.split(" ")[1];
+                            const entryTime = entry.E && entry.E.split(" ")[1];
+                            const exitTime = entry.S && entry.S.split(" ")[1];
                             const workedTime = entry.TOTAL;
 
                             dataFormated.push({
