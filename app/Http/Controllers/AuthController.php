@@ -35,6 +35,13 @@ class AuthController extends Controller
 
         $user = Auth::user();
         $userModel = User::find($user['id']);
+        
+        if(!$userModel->active) {
+            return response([
+                'error' => 'El usuario no se encuentra activo'
+            ]);
+        }
+
         $userModel->last_login = new DateTime();
         $userModel->save();
 

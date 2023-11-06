@@ -22,7 +22,9 @@ Route::group(['middleware' => ['jwt.auth', 'api-header']], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::controller(UserController::class)->group(function () {
-
+        Route::post('/user', 'store');
+        Route::put('/user/{id}', 'update');
+        Route::get('/user/getInfoUser', 'getInfoUser');
         Route::get('users/list', function () {
             $users = User::all();
             $response = ['success' => true, 'data' => $users];
