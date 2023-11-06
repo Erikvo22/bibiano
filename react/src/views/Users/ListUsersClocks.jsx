@@ -1,9 +1,18 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Table, Row, Col, Button, DatePicker, Select } from "antd";
+import React, { useEffect, useState } from "react";
+import {
+    Table,
+    Row,
+    Col,
+    Button,
+    DatePicker,
+    Select,
+    ConfigProvider,
+} from "antd";
 import { SettingOutlined } from "@ant-design/icons";
 import { DocumentTextIcon, AdjustmentsIcon } from "@heroicons/react/outline";
 import axiosClient from "../../axios";
-import moment from "moment";
+import es_ES from "antd/es/locale/es_ES";
+
 const ListUsersClocks = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [users, setUsers] = useState([
@@ -156,7 +165,7 @@ const ListUsersClocks = () => {
     const dateFormat = "YYYY/MM/DD";
     const { RangePicker } = DatePicker;
     return (
-        <>
+        <ConfigProvider locale={es_ES}>
             <h1 className="pb-4 text-2xl">Historial de fichajes</h1>
             <Row className="mb-2">
                 <Col span={12} className="flex items-center justify-start">
@@ -284,7 +293,7 @@ const ListUsersClocks = () => {
             )}
 
             <Table columns={columns} dataSource={dataFormated} />
-        </>
+        </ConfigProvider>
     );
 };
 
