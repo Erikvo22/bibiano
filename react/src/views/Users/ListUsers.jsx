@@ -75,30 +75,30 @@ const ListUsers = () => {
             });
     };
 
-    useEffect(() => {
-        axiosClient({
-            url: "/users/list",
-        })
-            .then((response) => {
-                const usersSerialized = response.data.data.map((user) => {
-                    user.active = user.active === 1 ? true : false;
-                    user.mobile = user.mobile === null ? "" : user.mobile;
-                    user.role_description =
-                        user.role === "ADMIN" ? "Admin" : "Empleado";
-                    return {
-                        ...user,
-                        surname: user.firstname + " " + user.secondname,
-                    };
-                });
-                setData(usersSerialized);
-                if (location.state?.success) {
-                    toast.success(location.state.message);
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, []);
+    // useEffect(() => {
+    //     axiosClient({
+    //         url: "/users/list",
+    //     })
+    //         .then((response) => {
+    //             const usersSerialized = response.data.data.map((user) => {
+    //                 user.active = user.active === 1 ? true : false;
+    //                 user.mobile = user.mobile === null ? "" : user.mobile;
+    //                 user.role_description =
+    //                     user.role === "ADMIN" ? "Admin" : "Empleado";
+    //                 return {
+    //                     ...user,
+    //                     surname: user.firstname + " " + user.secondname,
+    //                 };
+    //             });
+    //             setData(usersSerialized);
+    //             if (location.state?.success) {
+    //                 toast.success(location.state.message);
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         });
+    // }, []);
 
     const handleClick = () => {
         navigate("/user/nuevo");

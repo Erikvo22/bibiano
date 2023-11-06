@@ -37,6 +37,7 @@ Route::group(['middleware' => ['jwt.auth', 'api-header']], function () {
         Route::post('clocks/all', 'getClocksByUser');
         Route::post('clocks/save', 'store');
         Route::get('clocks/history', 'downloadHistoryClocks');
+        Route::get('clocks/history/list', 'listHistoryClocks');
     });
 
     Route::controller(UserController::class)->group(
