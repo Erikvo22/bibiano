@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Table, Row, Col, Button, DatePicker, Select } from "antd";
+import { SettingOutlined } from "@ant-design/icons";
 import { DocumentTextIcon, AdjustmentsIcon } from "@heroicons/react/outline";
 import axiosClient from "../../axios";
-import moment from "moment";
 const ListUsersClocks = () => {
-    const rangePickerRef = useRef();
+    const [showFilters, setShowFilters] = useState(false);
     const [users, setUsers] = useState([
         {
             value: "todos",
@@ -24,6 +24,7 @@ const ListUsersClocks = () => {
             url: "/clocks/history",
             method: "GET",
             responseType: "blob",
+            params: filters,
         })
             .then((response) => {
                 if (response.status !== 200) {
@@ -104,10 +105,6 @@ const ListUsersClocks = () => {
                         label: `${user.name} ${user.firstname} ${user.secondname}`,
                     };
                 });
-                // usersSerialized.unshift({
-                //     value: "todos",
-                //     label: "Todos",
-                // });
                 setUsers([...users, ...usersSerialized]);
             })
             .catch((error) => {
@@ -136,11 +133,13 @@ const ListUsersClocks = () => {
             title: "Hora entrada",
             dataIndex: "entryTime",
             key: "entryTime",
+            className: "hidden lg:table-cell",
         },
         {
             title: "Hora salida",
             dataIndex: "exitTime",
             key: "exitTime",
+            className: "hidden lg:table-cell",
         },
         {
             title: "Tiempo trabajado",
@@ -160,16 +159,34 @@ const ListUsersClocks = () => {
             <h1 className="pb-4 text-2xl">Historial de fichajes</h1>
             <Row className="mb-2">
                 <Col span={12} className="flex items-center justify-start">
-                    <Button
-                        onClick={() => {}}
-                        icon={
-                            <AdjustmentsIcon
-                                className="w-5 h-5"
-                                style={{ color: "green" }}
-                            />
-                        }
-                        className="border-0 bg-transparent"
-                    ></Button>
+                    {!showFilters && (
+                        <Button
+                            onClick={() => {
+                                setShowFilters(!showFilters);
+                            }}
+                            icon={
+                                <SettingOutlined
+                                    className="w-5 h-5"
+                                    style={{ color: "green" }}
+                                />
+                            }
+                            className="border-0 bg-transparent"
+                        ></Button>
+                    )}
+                    {showFilters && (
+                        <Button
+                            onClick={() => {
+                                setShowFilters(!showFilters);
+                            }}
+                            icon={
+                                <AdjustmentsIcon
+                                    className="w-5 h-5"
+                                    style={{ color: "green" }}
+                                />
+                            }
+                            className="border-0 bg-transparent"
+                        ></Button>
+                    )}
                 </Col>
                 <Col span={12} className="flex items-center justify-end">
                     <Button
@@ -184,54 +201,87 @@ const ListUsersClocks = () => {
                     ></Button>
                 </Col>
             </Row>
-            <Row className="mb-4">
-                <Col span={24} className="flex items-center justify-start">
-                    <RangePicker
-                        showNow
-                        format={dateFormat}
-                        onChange={handleDateChange}
-                        className="mr-4"
-                    />
-                    <Select
-                        showSearch
-                        placeholder="Selecciona un empleado"
-                        optionFilterProp="children"
-                        options={users}
-                        onChange={handleUserChange}
-                        className="mr-4 min-w-[100px] max-w-[300px]"
-                        defaultValue="todos"
-                    />
-                    <Button
-                        type="primary"
-                        className="button-antd-custom mr-2 full-width-button"
-                        onClick={() => {
-                            let sendFilters = {};
 
-                            if (selectedUser !== "todos") {
-                                sendFilters.user = selectedUser;
-                            }
-
-                            if (selectedDates[0] !== null) {
-                                sendFilters.startDate =
-                                    selectedDates[0].replace(/\//g, "-");
-                            }
-                            if (selectedDates[1] !== null) {
-                                sendFilters.endDate = selectedDates[1].replace(
-                                    /\//g,
-                                    "-"
-                                );
-                            }
-                            if (Object.keys(sendFilters).length > 0) {
-                                setFilters({ ...filters, ...sendFilters });
-                            } else {
-                                setFilters(filters);
-                            }
-                        }}
+            {showFilters && (
+                <Row className="mb-4">
+                    <Col
+                        xs={24}
+                        sm={24}
+                        md={24}
+                        lg={{ span: 8 }}
+                        className="flex flex-col justify-start mb-2 mr-2"
                     >
-                        Buscar
-                    </Button>
-                </Col>
-            </Row>
+                        <label className="mb-1">Buscador entre fechas:</label>
+                        <RangePicker
+                            showNow
+                            format={dateFormat}
+                            onChange={handleDateChange}
+                            style={{ width: "100%" }}
+                        />
+                    </Col>
+
+                    <Col
+                        xs={24}
+                        sm={24}
+                        md={24}
+                        lg={{ span: 8 }}
+                        className="flex flex-col justify-start mb-2 mr-2"
+                    >
+                        <label className="mb-1">Empleado:</label>
+                        <Select
+                            showSearch
+                            placeholder="Selecciona un empleado"
+                            optionFilterProp="children"
+                            options={users}
+                            onChange={handleUserChange}
+                            className="min-w-[200px]"
+                            defaultValue="todos"
+                            style={{ width: "100%" }}
+                        />
+                    </Col>
+                    <Col
+                        xs={24}
+                        sm={24}
+                        md={24}
+                        lg={{ span: 6 }}
+                        className="flex flex-col justify-start mb-2"
+                    >
+                        <label className="mb-1"> </label>
+                        <Button
+                            type="primary"
+                            className="button-antd-custom lg:max-w-lg md:mt-5"
+                            onClick={() => {
+                                let sendFilters = {};
+
+                                if (selectedUser !== "todos") {
+                                    sendFilters.user = selectedUser;
+                                }
+
+                                if (selectedDates[0] !== null) {
+                                    sendFilters.startDate =
+                                        selectedDates[0].replace(/\//g, "-");
+                                }
+                                if (selectedDates[1] !== null) {
+                                    sendFilters.endDate =
+                                        selectedDates[1].replace(/\//g, "-");
+                                }
+                                if (Object.keys(sendFilters).length > 0) {
+                                    setFilters({
+                                        ...filters,
+                                        ...sendFilters,
+                                    });
+                                } else {
+                                    let { user, ...rest } = filters;
+                                    setFilters(rest);
+                                }
+                            }}
+                        >
+                            Buscar
+                        </Button>
+                    </Col>
+                </Row>
+            )}
+
             <Table columns={columns} dataSource={dataFormated} />
         </>
     );

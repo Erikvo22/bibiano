@@ -95,7 +95,7 @@ class ClockingController extends Controller
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
         $user = Auth::user();
         $currentDate = Carbon::now()->setTimezone('Europe/London');
@@ -122,8 +122,8 @@ class ClockingController extends Controller
     {
         setlocale(LC_TIME, 'es_ES', 'Spanish_Spain', 'Spanish');
         $clocks = DB::table('clockings')
-            ->join('users', 'clockings.user_id', '=', 'users.id')
-            ->select('clockings.*', 'users.name as user_name');
+            ->select('clockings.*', 'users.name as user_name')
+            ->join('users', 'clockings.user_id', '=', 'users.id');
 
 
         if (isset($filters['user'])) {
@@ -131,18 +131,19 @@ class ClockingController extends Controller
         }
 
         if (isset($filters['startDate'])) {
-            $startDate = date('Y-m-d', strtotime($filters['startDate']));
-            $clocks = $clocks->where('clockings.date', '>=', $startDate);
+            $startDate =  Carbon::createFromFormat('Y-m-d', $filters['startDate']);
+            $clocks = $clocks->whereDate('clockings.date', '>=', $startDate);
         }
 
         if (isset($filters['endDate'])) {
-            $endDate = date('Y-m-d', strtotime($filters['endDate']));
-            $clocks = $clocks->where('clockings.date', '<=', $endDate);
+            $endDate =  Carbon::createFromFormat('Y-m-d', $filters['endDate']);
+            $clocks = $clocks->whereDate('clockings.date', '<=', $endDate);
         }
 
-        $clocks
+        $clocks = $clocks
             ->orderBy('clockings.date', 'asc')
             ->get();
+
 
         $result = [];
         $cont = 1;

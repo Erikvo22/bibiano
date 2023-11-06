@@ -31,7 +31,7 @@
 }
 
 
-@media (max-width: 576px) {
+@media (max-width: 1024px) {
     .full-width-row {
       display: block;
     }
