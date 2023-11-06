@@ -3,7 +3,6 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClockingController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 
@@ -39,6 +38,8 @@ Route::group(['middleware' => ['jwt.auth', 'api-header']], function () {
         Route::get('clocks/list', 'getClocksActualDay');
         Route::post('clocks/all', 'getClocksByUser');
         Route::post('clocks/save', 'store');
+        Route::get('clocks/history', 'downloadHistoryClocks');
+        Route::get('clocks/history/list', 'listHistoryClocks');
     });
 
     Route::controller(UserController::class)->group(

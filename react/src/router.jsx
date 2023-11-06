@@ -5,6 +5,7 @@ import ListUsers from "./views/Users/ListUsers.jsx";
 import Dashboard from "./views/Dashboard/Dashboard.jsx";
 import FormUser from "./views/Users/FormUser.jsx";
 import MyClocks from "./views/MyClocks/MyClocks.jsx";
+import ListUsersClocks from "./views/Users/ListUsersClocks.jsx";
 
 const router = createBrowserRouter([
     {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
             {
                 path: "/users",
                 element: <ListUsers />,
+            },
+            {
+                path: "/history-clocks",
+                element: <ListUsersClocks />,
             },
             {
                 path: "/user/:user_id",
