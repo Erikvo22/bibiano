@@ -31,4 +31,11 @@ class Clocking extends Model implements Auditable
         'type'
     ];
 
+    /**
+     * Get the user that owns the clocking.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
