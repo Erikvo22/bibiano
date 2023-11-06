@@ -232,12 +232,13 @@ class ClockingController extends Controller
         foreach ($historyClocks as $user => $date) {
             foreach ($date as $d => $day) {
                 foreach ($day['hour'] as $raw) {
+                    $total = $raw['TOTAL'] ?? '';
                     $body .= "<tr>
                         <td>{$d}</td>
                         <td>{$user}</td>
-                        <td>{$this->trasnformDateToHour($raw['E'])}</td>
-                        <td>{$this->trasnformDateToHour($raw['S'])}</td>
-                        <td>{$raw['TOTAL']}</td>
+                        <td>{$this->trasnformDateToHour($raw['E'] ?? '')}</td>
+                        <td>{$this->trasnformDateToHour($raw['S'] ?? '')}</td>
+                        <td>{$total}</td>
                       </tr>";
                 }
             }
@@ -261,6 +262,9 @@ class ClockingController extends Controller
 
     public function trasnformDateToHour(String $date)
     {
+        if (empty($date)) {
+            return '';
+        }
         $time = strtotime($date);
         $hours = date('H', $time);
         $minutes = date('i', $time);
