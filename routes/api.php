@@ -30,7 +30,7 @@ Route::group(['middleware' => ['jwt.auth', 'api-header']], function () {
             return response()->json($response, 201);
         });
         Route::post('/user', 'store');
-        Route::put('/user/reset-password', 'updatePasswordUser');
+        Route::post('/user/reset-password', 'updatePasswordUser');
         Route::put('/user/{id}', 'update');
     });
 

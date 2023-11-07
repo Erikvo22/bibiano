@@ -57,7 +57,7 @@ const ListUsers = () => {
     const setUserPassword = (newPassword, userId) => {
         axiosClient({
             url: "/user/reset-password",
-            method: "PUT",
+            method: "POST",
             data: {
                 id: userId,
                 newPassword: newPassword,
