@@ -12,9 +12,10 @@ import { SettingOutlined } from "@ant-design/icons";
 import { DocumentTextIcon, AdjustmentsIcon } from "@heroicons/react/outline";
 import axiosClient from "../../axios";
 import es_ES from "antd/es/locale/es_ES";
-
+import dayjs from "dayjs";
+const DATE_FORMAT = "DD/MM/YYYY";
 const ListUsersClocks = () => {
-    const [showFilters, setShowFilters] = useState(false);
+    const [showFilters, setShowFilters] = useState(null);
     const [users, setUsers] = useState([
         {
             value: "todos",
@@ -27,7 +28,18 @@ const ListUsersClocks = () => {
     });
     const [dataFormated, setDataFormated] = useState([]);
     const [selectedUser, setSelectedUser] = useState("todos");
-    const [selectedDates, setSelectedDates] = useState([null, null]);
+    const [selectedDates, setSelectedDates] = useState([
+        dayjs().subtract(1, "month").format(DATE_FORMAT),
+        dayjs().format(DATE_FORMAT),
+    ]);
+
+    const handleDefaultValue = () => [dayjs().subtract(1, "month"), dayjs()];
+    const handleUserChange = (value) => setSelectedUser(value);
+    const handleDateChange = (dates, dateString) => {
+        setSelectedDates(dateString);
+    };
+
+    const { RangePicker } = DatePicker;
 
     const downloadHistoryClocks = () => {
         axiosClient({
@@ -158,12 +170,6 @@ const ListUsersClocks = () => {
         },
     ];
 
-    const handleUserChange = (value) => setSelectedUser(value);
-    const handleDateChange = (dates, dateString) => {
-        setSelectedDates(dateString);
-    };
-    const dateFormat = "YYYY/MM/DD";
-    const { RangePicker } = DatePicker;
     return (
         <ConfigProvider locale={es_ES}>
             <h1 className="pb-4 text-2xl">Historial de fichajes</h1>
@@ -224,8 +230,9 @@ const ListUsersClocks = () => {
                         <label className="mb-1">Buscador entre fechas:</label>
                         <RangePicker
                             showNow={true}
-                            format={dateFormat}
+                            format={DATE_FORMAT}
                             onChange={handleDateChange}
+                            defaultValue={handleDefaultValue}
                             style={{ width: "100%" }}
                         />
                     </Col>
@@ -262,27 +269,26 @@ const ListUsersClocks = () => {
                             className="button-antd-custom lg:max-w-lg md:mt-5"
                             onClick={() => {
                                 let sendFilters = {};
+                                let updatedFiltersUser =
+                                    selectedUser === "todos"
+                                        ? (({ user, ...rest }) => rest)(filters)
+                                        : { ...filters, user: selectedUser };
 
-                                if (selectedUser !== "todos") {
-                                    sendFilters.user = selectedUser;
+                                if (selectedDates[0] !== "") {
+                                    sendFilters.startDate = selectedDates[0];
                                 }
 
-                                if (selectedDates[0] !== null) {
-                                    sendFilters.startDate =
-                                        selectedDates[0].replace(/\//g, "-");
+                                if (selectedDates[1] !== "") {
+                                    sendFilters.endDate = selectedDates[1];
                                 }
-                                if (selectedDates[1] !== null) {
-                                    sendFilters.endDate =
-                                        selectedDates[1].replace(/\//g, "-");
-                                }
+
                                 if (Object.keys(sendFilters).length > 0) {
                                     setFilters({
-                                        ...filters,
+                                        ...updatedFiltersUser,
                                         ...sendFilters,
                                     });
                                 } else {
-                                    let { user, ...rest } = filters;
-                                    setFilters(rest);
+                                    setFilters(updatedFiltersUser);
                                 }
                             }}
                         >

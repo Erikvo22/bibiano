@@ -130,13 +130,14 @@ class ClockingController extends Controller
             $clocks = $clocks->where('clockings.user_id', $filters['user']);
         }
 
-        if (isset($filters['startDate'])) {
-            $startDate =  Carbon::createFromFormat('Y-m-d', $filters['startDate']);
+        if (isset($filters['startDate']) && !empty($filters['startDate'])) {
+
+            $startDate =  Carbon::createFromFormat('d/m/Y', $filters['startDate']);
             $clocks = $clocks->whereDate('clockings.date', '>=', $startDate);
         }
 
-        if (isset($filters['endDate'])) {
-            $endDate =  Carbon::createFromFormat('Y-m-d', $filters['endDate']);
+        if (isset($filters['endDate']) && !empty($filters['endDate'])) {
+            $endDate =  Carbon::createFromFormat('d/m/Y', $filters['endDate']);
             $clocks = $clocks->whereDate('clockings.date', '<=', $endDate);
         }
 
@@ -144,27 +145,27 @@ class ClockingController extends Controller
             ->orderBy('clockings.date', 'asc')
             ->get();
 
-
         $result = [];
         $cont = 1;
         $position = 0;
         foreach ($clocks as $clock) {
             $dateExploded = explode(' ', $clock->date);
             $dateExplodedBefore = explode(' ', $clocks[$position]->date);
+            $dateExplodedFormated = Carbon::createFromFormat('Y-m-d', $dateExploded[0])->format('d/m/Y');
 
             if ($cont % 2 === 0) {
-                $sizeHourArrayByDate = count($result[$clock->user_name][$dateExploded[0]]['hour']);
-                $result[$clock->user_name][$dateExploded[0]]['hour'][$sizeHourArrayByDate - 1]['S'] = $clock->date;
-                $fechaInicio = new DateTime($result[$clock->user_name][$dateExploded[0]]['hour'][$sizeHourArrayByDate - 1]['E']);
+                $sizeHourArrayByDate = count($result[$clock->user_name][$dateExplodedFormated]['hour']);
+                $result[$clock->user_name][$dateExplodedFormated]['hour'][$sizeHourArrayByDate - 1]['S'] = $clock->date;
+                $fechaInicio = new DateTime($result[$clock->user_name][$dateExplodedFormated]['hour'][$sizeHourArrayByDate - 1]['E']);
                 $fechaFin = new DateTime($clock->date);
                 $intervalo = $fechaFin->diff($fechaInicio);
-                $result[$clock->user_name][$dateExploded[0]]['hour'][$sizeHourArrayByDate - 1]['TOTAL'] = $intervalo->h . 'h:' . $intervalo->i . 'm:' . $intervalo->s . 's';
+                $result[$clock->user_name][$dateExplodedFormated]['hour'][$sizeHourArrayByDate - 1]['TOTAL'] = $intervalo->h . 'h:' . $intervalo->i . 'm:' . $intervalo->s . 's';
                 $cont = 0;
             } else {
                 if ($dateExplodedBefore === $dateExploded && $position !== 0) {
-                    $result[$clock->user_name][$dateExploded[0]]['hour'][] = ['E' => $clock->date];
+                    $result[$clock->user_name][$dateExplodedFormated]['hour'][] = ['E' => $clock->date];
                 } else {
-                    $result[$clock->user_name][$dateExploded[0]] = ['hour' => [['E' => $clock->date]]];
+                    $result[$clock->user_name][$dateExplodedFormated] = ['hour' => [['E' => $clock->date]]];
                 }
             }
             $cont++;
