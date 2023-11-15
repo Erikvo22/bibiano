@@ -15,7 +15,7 @@ class UsersSeeder extends Seeder
             'secondname' => 'Olivares',
             'dni' => '11111111A',
             'email' => 'erikv@gmail.com',
-            'password' => bcrypt('1234'),
+            'password' => bcrypt('12345678'),
             'role' => 'USER',
             'active' => true,
         ]);
@@ -26,8 +26,8 @@ class UsersSeeder extends Seeder
             'secondname' => 'Bello',
             'dni' => '11111111B',
             'email' => 'antonioj@gmail.com',
-            'password' => bcrypt('1234'),
-            'role'=> 'ADMIN',
+            'password' => bcrypt('12345678'),
+            'role' => 'ADMIN',
             'active' => false,
         ]);
     }

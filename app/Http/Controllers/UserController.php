@@ -15,12 +15,12 @@ class UserController extends Controller
     public function getInfoUser()
     {
         $user = Auth::user();
-        $user = User::find($user->id); 
+        $user = User::find($user->id);
         return new JsonResponse([
             'data' => $user,
         ]);
     }
-    
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -30,7 +30,7 @@ class UserController extends Controller
             'dni' => 'required|string|max:9|unique:users',
             'role' => 'required|string|max:128',
             'mobile' => 'nullable|max:14',
-            'email' => 'required|string|email|max:128|unique:users',
+            'email' => 'nullable|string|email|max:128|unique:users',
             'password' => 'required|string|min:8|max:128',
         ], [
             'email.unique' => 'El correo electrónico ya está en uso.',
@@ -75,7 +75,7 @@ class UserController extends Controller
             'role' => 'required|string|max:128',
             'mobile' => 'sometimes|max:14',
             'dni' => 'required|string|max:9',
-            'email' => 'required|string|email|max:128',
+            'email' => 'sometimes|string|email|max:128',
         ]);
 
 

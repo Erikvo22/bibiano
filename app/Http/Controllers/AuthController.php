@@ -27,7 +27,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
-        if (! $token = auth()->attempt($credentials)) {
+        if (!$token = auth()->attempt($credentials)) {
             return response([
                 'error' => 'Las credenciales proporcionadas no son correctas'
             ]);
@@ -35,8 +35,8 @@ class AuthController extends Controller
 
         $user = Auth::user();
         $userModel = User::find($user['id']);
-        
-        if(!$userModel->active) {
+
+        if (!$userModel->active) {
             return response([
                 'error' => 'El usuario no se encuentra activo'
             ]);
