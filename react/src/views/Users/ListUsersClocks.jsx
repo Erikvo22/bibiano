@@ -25,6 +25,8 @@ const ListUsersClocks = () => {
     const [filters, setFilters] = useState({
         page: 0,
         limit: 10,
+        startDate: dayjs().subtract(1, "month").format(DATE_FORMAT),
+        endDate: dayjs().format(DATE_FORMAT),
     });
     const [dataFormated, setDataFormated] = useState([]);
     const [selectedUser, setSelectedUser] = useState("todos");

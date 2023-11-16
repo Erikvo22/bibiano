@@ -139,9 +139,9 @@ const Home = () => {
             >
                 <Layout className="h-16 flex justify-center items-center green-app">
                     <Image
-                        src="/logo-simple.png"
+                        src="/logotipo.svg"
                         preview={false}
-                        style={{ width: "6em", height: "4em" }}
+                        style={{ width: "6em", height: "4em", padding: "6px" }}
                     />
                 </Layout>
                 <Layout>

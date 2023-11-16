@@ -154,11 +154,6 @@ const FormUser = () => {
                                 name="email"
                                 rules={[
                                     {
-                                        required: true,
-                                        message:
-                                            "El correo electrónico es requerido",
-                                    },
-                                    {
                                         type: "email",
                                         message:
                                             "El correo electrónico no es válido",
