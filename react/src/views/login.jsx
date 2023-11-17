@@ -74,7 +74,7 @@ export default function Login() {
                         <div className="mb-6">
                             <label className="block text-gray-700 text-sm font-bold mb-2 inline-flex">
                                 <UserIcon className="w-5 h-5" />
-                                Dni
+                                DNI
                             </label>
                             <div>
                                 <input

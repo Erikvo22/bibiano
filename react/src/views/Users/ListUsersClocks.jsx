@@ -9,11 +9,14 @@ import {
     ConfigProvider,
 } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
-import { DocumentTextIcon, AdjustmentsIcon } from "@heroicons/react/outline";
+import { DocumentTextIcon, AdjustmentsIcon, ChartSquareBarIcon } from "@heroicons/react/outline";
 import axiosClient from "../../axios";
 import es_ES from "antd/es/locale/es_ES";
 import dayjs from "dayjs";
+import moment from "moment";
+
 const DATE_FORMAT = "DD/MM/YYYY";
+
 const ListUsersClocks = () => {
     const [showFilters, setShowFilters] = useState(null);
     const [users, setUsers] = useState([
@@ -43,9 +46,9 @@ const ListUsersClocks = () => {
 
     const { RangePicker } = DatePicker;
 
-    const downloadHistoryClocks = () => {
+    const downloadHistoryClocksPdf = () => {
         axiosClient({
-            url: "/clocks/history",
+            url: "/clocks/history/pdf",
             method: "GET",
             responseType: "blob",
             params: filters,
@@ -60,11 +63,31 @@ const ListUsersClocks = () => {
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = "clocking_report.pdf";
+                a.download = "informe_fichajes_" + moment().format('DDMMYYYY') + ".pdf";
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
             })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+    };
+
+    const downloadHistoryClocksCsv = () => {
+        axiosClient({
+            url: "/clocks/history/csv",
+            method: "GET",
+            responseType: "blob",
+            params: filters,
+        })
+            .then(response => {
+                console.log(response);
+                const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = "informe_fichajes_" + moment().format('DDMMYYYY') + ".csv";
+                link.click();
+              })
             .catch((error) => {
                 console.error("Error:", error);
             });
@@ -208,9 +231,19 @@ const ListUsersClocks = () => {
                 </Col>
                 <Col span={12} className="flex items-center justify-end">
                     <Button
-                        onClick={downloadHistoryClocks}
+                        onClick={downloadHistoryClocksPdf}
                         icon={
                             <DocumentTextIcon
+                                className="w-5 h-5"
+                                style={{ color: "green" }}
+                            />
+                        }
+                        className="border-0 bg-transparent"
+                    ></Button>
+                    <Button
+                        onClick={downloadHistoryClocksCsv}
+                        icon={
+                            <ChartSquareBarIcon
                                 className="w-5 h-5"
                                 style={{ color: "green" }}
                             />
