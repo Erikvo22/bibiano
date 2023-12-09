@@ -21,8 +21,10 @@ VITE_API_PUBLIC_KEY=''
 docker-compose run --rm composer install
 
 *** Optimizacion y cache ***
-docker-compose run --rm artisan key:generate
+docker-compose run --rm artisan jwt:secret
 docker-compose run --rm artisan optimize
+
+*** Migraciones y Seeders ***
 
 *** Instalar dependencias de React ***
 docker-compose run --rm  --service-ports npm run dev
