@@ -31,3 +31,6 @@ docker-compose run --rm npm install
 
 *** Levantar Servidor local de React ***
 docker-compose run --service-ports npm run start
+
+*** Utilidades composer ***
+docker-compose run --rm composer dump-autoload

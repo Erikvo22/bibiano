@@ -4,7 +4,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClockingController;
 use App\Http\Controllers\ClockingReportController;
-use App\Http\Controllers\StatusController; 
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 
@@ -60,6 +59,3 @@ Route::group(['middleware' => ['jwt.auth', 'api-header']], function () {
 Route::group(['middleware' => 'api-header'], function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
-
-Route::get('/server-status', [StatusController::class, 'serverStatus']);
-
