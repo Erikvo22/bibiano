@@ -15,14 +15,15 @@ services:
     restart: unless-stopped
     container_name: nginx
     ports:
-      - 8000:8000
+      - 8005:8005
     volumes:
-      - ./src:/var/www/html
+      - ./src/laravel:/var/www/html
       - .env:/var/www/html/.env
     depends_on:
       - php
       - mysql
       - phpmyadmin
+      - redis
     networks:
       - laravel
 
@@ -36,9 +37,9 @@ services:
         - USER=${USER:-laravel}
     container_name: php
     ports:
-      - ":9000"
+      - "9000:9000"
     volumes:
-      - ./src:/var/www/html
+      - ./src/laravel:/var/www/html
       - .env:/var/www/html/.env
     networks:
       - laravel
@@ -59,6 +60,15 @@ services:
       SERVICE_NAME: mysql
     volumes:
       - ./docker/mysql:/var/lib/mysql
+    networks:
+      - laravel
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - 6380:6379
     networks:
       - laravel
 
@@ -87,7 +97,7 @@ services:
         - USER=${USER:-laravel}
     container_name: laravel-migrate-seed
     volumes:
-      - ./src:/var/www/html
+      - ./src/laravel:/var/www/html
       - .env:/var/www/html/.env
     depends_on:
       - mysql
@@ -111,7 +121,7 @@ services:
         - USER=${USER:-laravel}
     container_name: composer
     volumes:
-      - ./src:/var/www/html
+      - ./src/laravel:/var/www/html
       - .env:/var/www/html/.env
     working_dir: /var/www/html
     depends_on:
@@ -132,7 +142,7 @@ services:
         - USER=${USER:-laravel}
     container_name: artisan
     volumes:
-      - ./src:/var/www/html
+      - ./src/laravel:/var/www/html
       - .env:/var/www/html/.env
     depends_on:
       - mysql
@@ -146,12 +156,11 @@ services:
     image: node:alpine
     container_name: npm
     volumes:
-      - ./src:/var/www/html
+      - ./src/react:/var/www/html
       - .env:/var/www/html/.env
     ports:
       - 3000:3000
-      - 3001:3001
-    working_dir: /var/www/html/react
+    working_dir: /var/www/html
     profiles: ["npm"]
     entrypoint: ['npm']
     networks:
