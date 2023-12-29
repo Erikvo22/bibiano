@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Layout, Menu, Button, Image, Modal } from "antd";
 import {
@@ -16,8 +16,7 @@ import axiosClient from "../../axios";
 import "./home.css";
 
 const Home = () => {
-    const { currentUser, userToken, setCurrentUser, setUserToken } =
-        useStateContext();
+    const { currentUser, setCurrentUser, setUserToken } = useStateContext();
     const [collapsed, setCollapsed] = useState(true);
     const { Header, Sider, Content } = Layout;
     const navigate = useNavigate();
@@ -30,7 +29,7 @@ const Home = () => {
             .then((response) => {
                 setCurrentUser(response.data.data);
             })
-            .catch((error) => {
+            .catch(() => {
                 Modal.error({
                     title: "Ha ocurrido un error inesperado",
                     content:
@@ -47,11 +46,11 @@ const Home = () => {
             url: "/logout",
             method: "POST",
         })
-            .then((response) => {
+            .then(() => {
                 setUserToken(null);
                 navigate("/login");
             })
-            .catch((error) => {
+            .catch(() => {
                 Modal.error({
                     title: "Ha ocurrido un error inesperado",
                     content:
@@ -134,7 +133,7 @@ const Home = () => {
                 trigger={null}
                 collapsible
                 collapsed={collapsed}
-                onCollapse={(c, t) => toggleCollapsed()}
+                onCollapse={() => toggleCollapsed()}
                 className="ant-side-custom"
             >
                 <Layout className="h-16 flex justify-center items-center green-app">

@@ -7,8 +7,7 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { Image, Modal } from "antd";
 
 export default function Login() {
-    const { currentUser, userToken, setCurrentUser, setUserToken } =
-        useStateContext();
+    const { userToken, setCurrentUser, setUserToken } = useStateContext();
     const [user, setUser] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState({ __html: "" });

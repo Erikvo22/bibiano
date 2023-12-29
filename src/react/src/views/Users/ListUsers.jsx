@@ -8,7 +8,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useStateContext } from "../../contexts/ContextProvider";
 
 const onAvailabilityChange = (record, checked) => {
     axiosClient({
@@ -30,7 +29,6 @@ const onAvailabilityChange = (record, checked) => {
 };
 
 const ListUsers = () => {
-    const { currentUser } = useStateContext();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
@@ -63,7 +61,7 @@ const ListUsers = () => {
                 newPassword: newPassword,
             },
         })
-            .then((response) => {
+            .then(() => {
                 toast.success("Se ha actualizado la contraseña correctamente");
             })
             .catch((error) => {

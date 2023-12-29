@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Table,
     Row,
@@ -9,7 +9,11 @@ import {
     ConfigProvider,
 } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
-import { DocumentTextIcon, AdjustmentsIcon, ChartSquareBarIcon } from "@heroicons/react/outline";
+import {
+    DocumentTextIcon,
+    AdjustmentsIcon,
+    ChartSquareBarIcon,
+} from "@heroicons/react/outline";
 import axiosClient from "../../axios";
 import es_ES from "antd/es/locale/es_ES";
 import dayjs from "dayjs";
@@ -63,7 +67,8 @@ const ListUsersClocks = () => {
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = "informe_fichajes_" + moment().format('DDMMYYYY') + ".pdf";
+                a.download =
+                    "informe_fichajes_" + moment().format("DDMMYYYY") + ".pdf";
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
@@ -80,14 +85,17 @@ const ListUsersClocks = () => {
             responseType: "blob",
             params: filters,
         })
-            .then(response => {
+            .then((response) => {
                 console.log(response);
-                const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                const link = document.createElement('a');
+                const blob = new Blob([response.data], {
+                    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                });
+                const link = document.createElement("a");
                 link.href = window.URL.createObjectURL(blob);
-                link.download = "informe_fichajes_" + moment().format('DDMMYYYY') + ".csv";
+                link.download =
+                    "informe_fichajes_" + moment().format("DDMMYYYY") + ".csv";
                 link.click();
-              })
+            })
             .catch((error) => {
                 console.error("Error:", error);
             });
@@ -306,7 +314,7 @@ const ListUsersClocks = () => {
                                 let sendFilters = {};
                                 let updatedFiltersUser =
                                     selectedUser === "todos"
-                                        ? (({ user, ...rest }) => rest)(filters)
+                                        ? (({ ...rest }) => rest)(filters)
                                         : { ...filters, user: selectedUser };
 
                                 if (selectedDates[0] !== "") {

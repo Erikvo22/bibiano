@@ -1,6 +1,5 @@
-import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Row, Col, Form, Input, Select, Button, Alert } from "antd";
+import { Row, Col, Form, Input, Select, Button } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 
