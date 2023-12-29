@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 networks:
   laravel:
@@ -14,7 +14,7 @@ services:
         - GID=${GID:-1000}
         - USER=${USER:-laravel}
     restart: unless-stopped
-    container_name: nginx
+    container_name: Fichajes-nginx
     ports:
       - 8002:80
     volumes:
@@ -37,7 +37,7 @@ services:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
         - USER=${USER:-laravel}
-    container_name: php
+    container_name: Fichajes-php
     ports:
       - "9002:9000"
     volumes:
@@ -48,7 +48,7 @@ services:
 
   mysql:
     image: mariadb:10.6
-    container_name: mysql
+    container_name: Fichajes-mysql
     restart: unless-stopped
     tty: true
     ports:
@@ -67,7 +67,7 @@ services:
 
   redis:
     image: redis:alpine
-    container_name: redis
+    container_name: Fichajes-redis
     restart: unless-stopped
     ports:
       - 6380:6379
@@ -76,7 +76,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin:5.2.0
-    container_name: phpmyadmin
+    container_name: Fichajes-phpmyadmin
     environment:
       PMA_ARBITRARY: 1
       MYSQL_USERNAME: bibiano
@@ -97,7 +97,7 @@ services:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
         - USER=${USER:-laravel}
-    container_name: laravel-migrate-seed
+    container_name: Fichajes-laravel-migrate-seed
     volumes:
       - ./src/laravel:/var/www/html
       - ./.env:/var/www/html/.env
@@ -105,11 +105,11 @@ services:
       - mysql
     profiles: ["migrate-seed"]
     working_dir: /var/www/html
-    entrypoint: ["/bin/sh","-c"]
+    entrypoint: ["/bin/sh", "-c"]
     command:
-    - |
-      php artisan migrate
-      php artisan db:seed DatabaseSeeder
+      - |
+        php artisan migrate
+        php artisan db:seed DatabaseSeeder
     networks:
       - laravel
 
@@ -121,7 +121,7 @@ services:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
         - USER=${USER:-laravel}
-    container_name: composer
+    container_name: Fichajes--composer
     volumes:
       - ./src/laravel:/var/www/html
       - ./.env:/var/www/html/.env
@@ -130,7 +130,7 @@ services:
       - php
     user: ${USER:-laravel} #system user
     profiles: ["composer"]
-    entrypoint: ['composer', '--ignore-platform-reqs']
+    entrypoint: ["composer", "--ignore-platform-reqs"]
     networks:
       - laravel
 
@@ -142,7 +142,7 @@ services:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
         - USER=${USER:-laravel}
-    container_name: artisan
+    container_name: Fichajes-artisan
     volumes:
       - ./src/laravel:/var/www/html
       - ./.env:/var/www/html/.env
@@ -150,13 +150,13 @@ services:
       - mysql
     working_dir: /var/www/html
     profiles: ["artisan"]
-    entrypoint: ['php', '/var/www/html/artisan']
+    entrypoint: ["php", "/var/www/html/artisan"]
     networks:
       - laravel
 
   npm:
     image: node:alpine
-    container_name: npm
+    container_name: Fichajes-npm
     volumes:
       - ./src/react:/var/www/html
       - .env:/var/www/html/.env
