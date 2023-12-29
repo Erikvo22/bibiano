@@ -57,9 +57,8 @@ services:
       MYSQL_DATABASE: laravel
       MYSQL_USER: bibiano
       MYSQL_PASSWORD: bibiano
+
       MYSQL_ROOT_PASSWORD: bibiano2023
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
     volumes:
       - ./docker/mysql:/var/lib/mysql
     networks:
@@ -163,6 +162,6 @@ services:
     ports:
       - "3010:3000"
     working_dir: /var/www/html
-    entrypoint: ["npm", "start"]
+    entrypoint: ["npm"]
     networks:
       - laravel
