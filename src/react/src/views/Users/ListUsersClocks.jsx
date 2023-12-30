@@ -341,7 +341,7 @@ const ListUsersClocks = () => {
                 </Row>
             )}
 
-            <Table columns={columns} dataSource={dataFormated} />
+            <Table columns={columns} dataSource={dataFormated} scroll={{ x: 500 }} />
         </ConfigProvider>
     );
 };

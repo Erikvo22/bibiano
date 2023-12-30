@@ -302,6 +302,7 @@ const ListUsers = () => {
                             },
                         })}
                         rowKey="id"
+                        scroll={{ x: 500 }}
                     />
                 </>
             )}
