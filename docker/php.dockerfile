@@ -22,8 +22,25 @@ RUN sed -i "s/group = www-data/group = '${USER}'/g" /usr/local/etc/php-fpm.d/www
 RUN echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf
 
 # Installing php extensions
-RUN apk update && apk upgrade
-RUN docker-php-ext-install pdo pdo_mysql bcmath
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
+    git \
+    zip \
+    unzip \
+    libzip \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    libxml2-dev \
+    libmcrypt-dev \
+    openssl-dev \
+    curl-dev \
+    g++ \
+    make \
+    autoconf \
+    icu-dev
+RUN docker-php-ext-install pdo pdo_mysql bcmath zip gd xml opcache intl
 
 # Installing redis extension
 RUN mkdir -p /usr/src/php/ext/redis \
