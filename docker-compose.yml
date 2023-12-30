@@ -20,7 +20,6 @@ services:
     volumes:
       - ./src/laravel:/var/www/html
       - ./src/react/build:/var/www/html/react
-      - ./.env.example:/var/www/html/.env
     depends_on:
       - php
       - mysql
@@ -42,7 +41,6 @@ services:
       - "9002:9000"
     volumes:
       - ./src/laravel:/var/www/html
-      - ./.env.example:/var/www/html/.env
     networks:
       - laravel
 
@@ -99,7 +97,6 @@ services:
     container_name: Fichajes-laravel-migrate-seed
     volumes:
       - ./src/laravel:/var/www/html
-      - ./.env.example:/var/www/html/.env
     depends_on:
       - mysql
     working_dir: /var/www/html
@@ -122,7 +119,6 @@ services:
     container_name: Fichajes--composer
     volumes:
       - ./src/laravel:/var/www/html
-      - ./.env.example:/var/www/html/.env
     working_dir: /var/www/html
     depends_on:
       - php
@@ -142,7 +138,6 @@ services:
     container_name: Fichajes-artisan
     volumes:
       - ./src/laravel:/var/www/html
-      - ./.env.example:/var/www/html/.env
     depends_on:
       - mysql
     working_dir: /var/www/html

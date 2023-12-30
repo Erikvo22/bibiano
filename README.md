@@ -24,7 +24,6 @@ docker-compose run --rm laravel-migrate-seed
 
 **_ Optimizacion y cache _**
 docker-compose run --rm artisan cache:clear
-docker-compose run --rm artisan cache:clear
 
 **_ Instalar dependencias de React _**
 docker-compose run --rm npm install
