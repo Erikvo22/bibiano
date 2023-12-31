@@ -47,7 +47,7 @@ services:
       - "9002:9000"
     volumes:
       - ./src/laravel:/var/www/html
-      - ./.env.example/var/www/html/.env
+      - ./.env.example:/var/www/html/.env
     networks:
       # - laravel
       - proxy
@@ -108,7 +108,7 @@ services:
     container_name: Fichajes-laravel-migrate-seed
     volumes:
       - ./src/laravel:/var/www/html
-      - ./.env.example/var/www/html/.env
+      - ./.env.example:/var/www/html/.env
     depends_on:
       - mysql
     working_dir: /var/www/html
@@ -132,7 +132,7 @@ services:
     container_name: Fichajes--composer
     volumes:
       - ./src/laravel:/var/www/html
-      - ./.env.example/var/www/html/.env
+      - ./.env.example:/var/www/html/.env
     working_dir: /var/www/html
     depends_on:
       - php
