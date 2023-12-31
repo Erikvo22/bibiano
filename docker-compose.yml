@@ -27,7 +27,6 @@ services:
       - phpmyadmin
       - redis
     networks:
-      # - laravel
       - proxy
 
   php:
@@ -45,7 +44,6 @@ services:
       - ./src/laravel:/var/www/html
       - ./.env.example:/var/www/html/.env
     networks:
-      # - laravel
       - proxy
 
   mysql:
@@ -64,7 +62,6 @@ services:
     volumes:
       - ./docker/mysql:/var/lib/mysql
     networks:
-      # - laravel
       - proxy
 
   redis:
@@ -74,7 +71,6 @@ services:
     ports:
       - 6380:6379
     networks:
-      # - laravel
       - proxy
 
   phpmyadmin:
@@ -90,7 +86,6 @@ services:
     ports:
       - 8888:80
     networks:
-      # - laravel
       - proxy
 
   laravel-migrate-seed:
@@ -101,7 +96,7 @@ services:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
         - USER=${USER:-laravel}
-    container_name: Fichajes-laravel-migrate-seed
+    container_name: Fichajes-laravel-migrate-fresh-seed
     volumes:
       - ./src/laravel:/var/www/html
       - ./.env.example:/var/www/html/.env
@@ -111,10 +106,9 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
-        php artisan migrate
+        php artisan migrate:fresh
         php artisan db:seed DatabaseSeeder
     networks:
-      # - laravel
       - proxy
 
   composer:
@@ -132,10 +126,9 @@ services:
     working_dir: /var/www/html
     depends_on:
       - php
-    user: ${USER:-laravel} #system user
+    user: ${USER:-laravel}
     entrypoint: ["composer", "--ignore-platform-reqs"]
     networks:
-      # - laravel
       - proxy
 
   artisan:
@@ -155,7 +148,6 @@ services:
     working_dir: /var/www/html
     entrypoint: ["php", "/var/www/html/artisan"]
     networks:
-      # - laravel
       - proxy
 
   npm:
@@ -168,5 +160,4 @@ services:
     working_dir: /var/www/html
     entrypoint: ["npm"]
     networks:
-      # - laravel
       - proxy

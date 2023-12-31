@@ -61,7 +61,9 @@ class ClockingController extends Controller
             foreach ($day as $dates) {
                 $result[$cont]['dates'][] = array(
                     'day' => $dates['date'],
-                    'type' => $dates['type']
+                    'type' => $dates['type_id'],
+                    'type_name' => $dates['type_name'],
+                    'comments' => $dates['comments']
                 );
             }
             $cont++;
@@ -96,12 +98,14 @@ class ClockingController extends Controller
     {
         $user = Auth::user();
         $currentDate = Carbon::now()->setTimezone('Europe/London');
-        $type = $request->type;
+        $type = $request->type_id;
+        $comments = $request->comments;
 
         $newClock = new Clocking();
         $newClock->user_id = $user['id'];
         $newClock->date = $currentDate;
-        $newClock->type = $type;
+        $newClock->type_id = $type;
+        $newClock->comments = $comments;
         $newClock->save();
     }
 }

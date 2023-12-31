@@ -20,10 +20,9 @@ docker-compose run --rm composer install
 docker-compose run --rm artisan jwt:secret
 
 **_ Migraciones y Seeders _**
-docker-compose run --rm laravel-migrate-seed
+docker-compose run --rm laravel-migrate-fresh-seed
 
 **_ Optimizacion y cache _**
-docker-compose run --rm artisan cache:clear
 docker-compose run --rm artisan cache:clear
 
 **_ Instalar dependencias de React _**
