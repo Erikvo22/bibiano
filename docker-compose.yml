@@ -1,8 +1,12 @@
 version: "3"
-
+#CONFIGURACION PARA SERVIDOR PRIVADO CON RED CREADA
 networks:
   proxy:
-    driver: bridge
+    external: true
+# CONFIGURACION PARA LOCAL
+# networks:
+#   proxy:
+#     driver: bridge
 
 services:
   nginx:
