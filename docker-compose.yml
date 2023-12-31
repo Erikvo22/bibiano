@@ -1,0 +1,167 @@
+version: "3"
+#CONFIGURACION PARA SERVIDOR PRIVADO CON RED CREADA
+networks:
+  proxy:
+    external: true
+# CONFIGURACION PARA LOCAL
+# networks:
+#   proxy:
+#     driver: bridge
+
+services:
+  nginx:
+    build:
+      context: ./docker
+      dockerfile: nginx.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+        - USER=${USER:-laravel}
+    restart: unless-stopped
+    container_name: Fichajes-nginx
+    ports:
+      - 8002:80
+    volumes:
+      - ./src/laravel:/var/www/html
+      - ./src/react/build:/var/www/html/react
+      - ./.env.example:/var/www/html/.env
+    depends_on:
+      - php
+      - mysql
+      - phpmyadmin
+      - redis
+    networks:
+      - proxy
+
+  php:
+    build:
+      context: ./docker
+      dockerfile: php.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+        - USER=${USER:-laravel}
+    container_name: Fichajes-php
+    ports:
+      - "9002:9000"
+    volumes:
+      - ./src/laravel:/var/www/html
+      - ./.env.example:/var/www/html/.env
+    networks:
+      - proxy
+
+  mysql:
+    image: mariadb:10.6
+    container_name: Fichajes-mysql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 3320:3306
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: bibiano
+      MYSQL_PASSWORD: bibiano
+
+      MYSQL_ROOT_PASSWORD: bibiano2023
+    volumes:
+      - ./docker/mysql:/var/lib/mysql
+    networks:
+      - proxy
+
+  redis:
+    image: redis:alpine
+    container_name: Fichajes-redis
+    restart: unless-stopped
+    ports:
+      - 6380:6379
+    networks:
+      - proxy
+
+  phpmyadmin:
+    image: phpmyadmin:5.2.0
+    container_name: Fichajes-phpmyadmin
+    environment:
+      PMA_ARBITRARY: 1
+      MYSQL_USERNAME: bibiano
+      MYSQL_ROOT_PASSWORD: bibiano2023
+      MYSQL_HOST: mysql
+    depends_on:
+      - mysql
+    ports:
+      - 8888:80
+    networks:
+      - proxy
+
+  laravel-migrate-seed:
+    build:
+      context: ./docker
+      dockerfile: php.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+        - USER=${USER:-laravel}
+    container_name: Fichajes-laravel-migrate-fresh-seed
+    volumes:
+      - ./src/laravel:/var/www/html
+      - ./.env.example:/var/www/html/.env
+    depends_on:
+      - mysql
+    working_dir: /var/www/html
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        php artisan migrate:fresh
+        php artisan db:seed DatabaseSeeder
+    networks:
+      - proxy
+
+  composer:
+    build:
+      context: ./docker
+      dockerfile: composer.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+        - USER=${USER:-laravel}
+    container_name: Fichajes--composer
+    volumes:
+      - ./src/laravel:/var/www/html
+      - ./.env.example:/var/www/html/.env
+    working_dir: /var/www/html
+    depends_on:
+      - php
+    user: ${USER:-laravel}
+    entrypoint: ["composer", "--ignore-platform-reqs"]
+    networks:
+      - proxy
+
+  artisan:
+    build:
+      context: ./docker
+      dockerfile: php.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+        - USER=${USER:-laravel}
+    container_name: Fichajes-artisan
+    volumes:
+      - ./src/laravel:/var/www/html
+      - ./.env.example:/var/www/html/.env
+    depends_on:
+      - mysql
+    working_dir: /var/www/html
+    entrypoint: ["php", "/var/www/html/artisan"]
+    networks:
+      - proxy
+
+  npm:
+    image: node:alpine
+    container_name: Fichajes-npm
+    volumes:
+      - ./src/react:/var/www/html
+    ports:
+      - "3010:3000"
+    working_dir: /var/www/html
+    entrypoint: ["npm"]
+    networks:
+      - proxy
