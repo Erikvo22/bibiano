@@ -17,7 +17,8 @@ class Clocking extends Model implements Auditable
     protected $fillable = [
         'user_id',
         'date',
-        'type'
+        'type_id',
+        'comments'
     ];
 
     /**
@@ -28,7 +29,8 @@ class Clocking extends Model implements Auditable
     protected $auditInclude = [
         'user_id',
         'date',
-        'type'
+        'type_id',
+        'comments'
     ];
 
     /**
@@ -37,5 +39,11 @@ class Clocking extends Model implements Auditable
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getTypeNameAttribute()
+    {
+        $clockingType = ClockingTypes::findOrFail($this->type_id);
+        return $clockingType['name'];
     }
 }

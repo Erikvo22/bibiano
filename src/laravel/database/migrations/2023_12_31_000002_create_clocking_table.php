@@ -14,10 +14,13 @@ return new class extends Migration
         Schema::create('clockings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->dateTime('date');
-            $table->integer('type');
+            $table->unsignedBigInteger('type_id');
+            $table->dateTime('date');           
+            $table->string('comments')->nullable();
             $table->timestamps();
+
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('type_id')->references('id')->on('clocking_types');
         });
     }
 
