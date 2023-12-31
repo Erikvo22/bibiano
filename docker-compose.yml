@@ -1,12 +1,12 @@
 version: "3"
 
-# networks:
-#   laravel:
-#     driver: bridge
-
 networks:
   proxy:
-    external: true
+    driver: bridge
+
+# networks:
+#   proxy:
+#     external: true
 
 services:
   nginx:
