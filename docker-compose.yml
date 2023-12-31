@@ -1,8 +1,12 @@
 version: "3"
 
+# networks:
+#   laravel:
+#     driver: bridge
+
 networks:
-  laravel:
-    driver: bridge
+  proxy:
+    external: true
 
 services:
   nginx:
@@ -27,7 +31,8 @@ services:
       - phpmyadmin
       - redis
     networks:
-      - laravel
+      # - laravel
+      - proxy
 
   php:
     build:
@@ -44,7 +49,8 @@ services:
       - ./src/laravel:/var/www/html
       - ./.env.example/var/www/html/.env
     networks:
-      - laravel
+      # - laravel
+      - proxy
 
   mysql:
     image: mariadb:10.6
@@ -62,7 +68,8 @@ services:
     volumes:
       - ./docker/mysql:/var/lib/mysql
     networks:
-      - laravel
+      # - laravel
+      - proxy
 
   redis:
     image: redis:alpine
@@ -71,7 +78,8 @@ services:
     ports:
       - 6380:6379
     networks:
-      - laravel
+      # - laravel
+      - proxy
 
   phpmyadmin:
     image: phpmyadmin:5.2.0
@@ -86,7 +94,8 @@ services:
     ports:
       - 8888:80
     networks:
-      - laravel
+      # - laravel
+      - proxy
 
   laravel-migrate-seed:
     build:
@@ -109,7 +118,8 @@ services:
         php artisan migrate
         php artisan db:seed DatabaseSeeder
     networks:
-      - laravel
+      # - laravel
+      - proxy
 
   composer:
     build:
@@ -129,7 +139,8 @@ services:
     user: ${USER:-laravel} #system user
     entrypoint: ["composer", "--ignore-platform-reqs"]
     networks:
-      - laravel
+      # - laravel
+      - proxy
 
   artisan:
     build:
@@ -148,7 +159,8 @@ services:
     working_dir: /var/www/html
     entrypoint: ["php", "/var/www/html/artisan"]
     networks:
-      - laravel
+      # - laravel
+      - proxy
 
   npm:
     image: node:alpine
@@ -160,4 +172,5 @@ services:
     working_dir: /var/www/html
     entrypoint: ["npm"]
     networks:
-      - laravel
+      # - laravel
+      - proxy

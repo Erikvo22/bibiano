@@ -11,7 +11,7 @@ REACT -> 18
 git clone https://github.com/Erikvo22/bibiano.git
 
 **_ Levantar imagenes y contenedores Principales _**
-docker-compose up --build nginx -d
+docker-compose up --build -d nginx 
 
 **_ Instalar dependencias de LARAVEL _**
 docker-compose run --rm composer install
