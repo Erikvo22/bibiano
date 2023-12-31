@@ -94,7 +94,7 @@ services:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
         - USER=${USER:-laravel}
-    container_name: Fichajes-laravel-migrate-seed
+    container_name: Fichajes-laravel-migrate-fresh-seed
     volumes:
       - ./src/laravel:/var/www/html
     depends_on:
@@ -103,7 +103,7 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
-        php artisan migrate
+        php artisan migrate:fresh
         php artisan db:seed DatabaseSeeder
     networks:
       - laravel
